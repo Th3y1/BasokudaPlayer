@@ -15,6 +15,17 @@
             --text-muted: #8c9bab;
         }
 
+        /* Motyw Alya (Aktywny po przełączeniu) */
+        body.theme-alya {
+            --bg-main: #140d1a;
+            --bg-sec: #22152d;
+            --bg-panel: #311e42;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text-main: #f3e8ff;
+            --text-muted: #c084fc;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -28,6 +39,7 @@
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* --- NAV BAR --- */
@@ -319,6 +331,7 @@
         <div class="nav-right">
             <input type="text" class="search-bar" placeholder="Szukaj anime, studia, tagów..." id="searchBox" oninput="filterAnime()">
             <button class="btn btn-secondary" onclick="openWatchLaterModal()">🔖 Lista (<span id="watchLaterCount">0</span>)</button>
+            <button class="btn btn-secondary" onclick="toggleAlyaTheme()" id="themeBtn">💙 Motyw Alya</button>
             <button class="btn btn-primary" onclick="openAdminLoginModal()">🛠️ Panel Dev / Baza</button>
         </div>
     </nav>
@@ -500,7 +513,20 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             renderGrid();
+            // Sprawdź zapisany motyw
+            if (localStorage.getItem("basokuda_theme") === "alya") {
+                document.body.classList.add("theme-alya");
+                document.getElementById("themeBtn").textContent = "💖 Motyw Domyślny";
+            }
         });
+
+        /* --- MOTYW ALYA --- */
+        function toggleAlyaTheme() {
+            document.body.classList.toggle("theme-alya");
+            const isAlya = document.body.classList.contains("theme-alya");
+            localStorage.setItem("basokuda_theme", isAlya ? "alya" : "default");
+            document.getElementById("themeBtn").textContent = isAlya ? "💖 Motyw Domyślny" : "💙 Motyw Alya";
+        }
 
         /* --- BAZA DANYCH ZE ZDJĘCIAMI --- */
         let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db_v3")) || [
@@ -783,7 +809,7 @@
 
         function verifyAdminPassword() {
             const pass = document.getElementById("adminPasswordInput").value;
-            if (pass === "admin123" || pass === "basokuda") {
+            if (pass === "Korneliusz1111") {
                 closeAdminLoginModal();
                 document.getElementById("adminPasswordInput").value = "";
                 openAdminModal();
