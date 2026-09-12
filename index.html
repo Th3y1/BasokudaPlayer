@@ -9,8 +9,8 @@
             --bg-main: #0b0c10;
             --bg-sec: #151b22;
             --bg-panel: #1f2833;
-            --accent: #38bdf8; /* Niebieski motyw w stylu Alya */
-            --accent-hover: #0ea5e9;
+            --accent: #ff0055;
+            --accent-hover: #e0004b;
             --text-main: #ffffff;
             --text-muted: #8c9bab;
         }
@@ -86,27 +86,27 @@
             gap: 5px;
             transition: 0.2s;
         }
-        .btn-primary { background-color: var(--accent); color: #000; }
+        .btn-primary { background-color: var(--accent); color: #fff; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-secondary { background-color: rgba(255,255,255,0.1); color: #fff; }
         .btn-secondary:hover { background-color: rgba(255,255,255,0.2); }
         .btn-danger { background-color: #dc2626; color: #fff; }
         .btn-danger:hover { background-color: #b91c1c; }
 
-        /* --- HERO BANNER (ALYA MOTYW) --- */
+        /* --- HERO BANNER --- */
         .hero {
             position: relative;
             height: 70vh;
             display: flex;
             align-items: flex-end;
             padding: 40px;
-            background: linear-gradient(to top, var(--bg-main) 0%, rgba(11,12,16,0.5) 60%, rgba(11,12,16,0.85) 100%), 
-                        url('https://images8.alphacoders.com/137/thumb-1920-1371390.jpeg') center/cover;
+            background: linear-gradient(to top, var(--bg-main) 0%, rgba(11,12,16,0.6) 60%, rgba(11,12,16,0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920&auto=format&fit=crop') center/cover;
             margin-top: 50px;
         }
         .hero-content { max-width: 600px; z-index: 2; }
-        .hero-title { font-size: 40px; font-weight: 900; margin-bottom: 10px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .hero-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; text-shadow: 0 1px 5px rgba(0,0,0,0.8); }
+        .hero-title { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+        .hero-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
 
         /* --- KATALOG & FILTRY --- */
         .container { padding: 30px; }
@@ -127,9 +127,8 @@
         }
         .filter-chip.active, .filter-chip:hover {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             border-color: var(--accent);
-            font-weight: bold;
         }
 
         .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px; }
@@ -157,10 +156,10 @@
         .anime-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .anime-details { font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; }
 
-        /* --- PLAYER & ODCINKI (PEŁNY EKRAN) --- */
+        /* --- PLAYER & ODCINKI --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
             display: none; z-index: 2000;
             grid-template-columns: 350px 1fr;
         }
@@ -215,27 +214,24 @@
         }
 
         .player-top-bar {
-            padding: 12px 25px;
-            background: rgba(0,0,0,0.8);
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.5);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 10;
         }
 
         .ad-warning {
-            background: #0284c7;
-            color: #fff;
-            padding: 6px 20px;
-            font-size: 11px;
+            background: #d97706;
+            color: #000;
+            padding: 8px 20px;
+            font-size: 12px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 10;
         }
 
-        /* WIDEO NA PEŁNY EKRAN W OKNIE */
         .video-container {
             flex: 1;
             background: #000;
@@ -243,18 +239,11 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
         }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .video-container iframe, .video-container video {
             width: 100%;
             height: 100%;
             border: none;
-            object-fit: cover;
         }
         .video-placeholder {
             text-align: center;
@@ -262,13 +251,12 @@
         }
 
         .player-bottom-bar {
-            padding: 12px 25px;
+            padding: 15px 25px;
             background: var(--bg-sec);
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid rgba(255,255,255,0.05);
-            z-index: 10;
         }
 
         /* --- KOMENTARZE --- */
@@ -330,18 +318,18 @@
         <div class="nav-right">
             <input type="text" class="search-bar" placeholder="Szukaj anime, studia, tagów..." id="searchBox" oninput="filterAnime()">
             <button class="btn btn-secondary" onclick="openWatchLaterModal()">🔖 Lista (<span id="watchLaterCount">0</span>)</button>
-            <button class="btn btn-primary" onclick="openAdminModal()">🛠️ Panel Dev / Baza</button>
+            <button class="btn btn-primary" onclick="openAdminLoginModal()">🛠️ Panel Dev / Baza</button>
         </div>
     </nav>
 
-    <!-- HERO (ALYA MOTYW) -->
+    <!-- HERO -->
     <div class="hero">
         <div class="hero-content">
-            <span style="background:var(--accent); color:#000; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">HIT SEZONU • WYBÓR ALYA</span>
-            <h1 class="hero-title" id="heroTitle">Alya Sometimes Hides Her Feelings in Russian</h1>
-            <p class="hero-desc" id="heroDesc">Alisa Mikhailovna Kujou czaruje swoją urodą i sekretnymi słówkami po rosyjsku, które rozumie tylko Masachika. Sprawdź najnowsze odcinki w pełnym formacie HD!</p>
+            <span style="background:var(--accent); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">HIT SEZONU • WYBÓR AUTOMATYCZNY</span>
+            <h1 class="hero-title" id="heroTitle">Mushoku Tensei III</h1>
+            <p class="hero-desc" id="heroDesc">Kolejna rola i niesamowite przygody w świecie fantasy. Sprawdź najnowsze odcinki w najwyższej jakości z pełnym wsparciem lektora i napisów.</p>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="openPlayerModal(2)">▶ Oglądaj teraz</button>
+                <button class="btn btn-primary" onclick="openPlayerModal(0)">▶ Oglądaj teraz</button>
                 <button class="btn btn-secondary" onclick="toggleRandomAnime()">🎲 Losuj Anime</button>
             </div>
         </div>
@@ -378,7 +366,7 @@
 
         <div class="player-main-area">
             <div class="ad-warning">
-                <span>⚡ Odtwarzacz w trybie pełnoekranowym (Brak reklam zewnętrznych).</span>
+                <span>⚠️ Ten odcinek zawiera reklamy zewnętrzne. Własny system anty-ads aktywny.</span>
                 <button class="btn btn-secondary" style="padding: 2px 8px; font-size:10px;" onclick="toggleAutoplayNext()">Autoodtwarzanie: <span id="autoPlayStatus">WŁ</span></button>
             </div>
             <div class="player-top-bar">
@@ -439,6 +427,7 @@
                 <button class="close-btn" onclick="closeAdminModal()">×</button>
             </div>
             
+            <!-- Sekcja Dodawania -->
             <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 15px;">
                 <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">➕ Dodaj nowy odcinek</h4>
                 <div class="form-group">
@@ -460,6 +449,7 @@
                 <button class="btn btn-primary" style="width: 100%; justify-content:center;" onclick="addNewEpisode()">Dodaj Odcinek</button>
             </div>
 
+            <!-- Sekcja Usuwania -->
             <div style="margin-bottom: 15px;">
                 <h4 style="font-size: 13px; color: #f87171; margin-bottom: 10px;">🗑️ Usuń istniejący odcinek</h4>
                 <div class="form-group">
@@ -513,8 +503,8 @@
             renderGrid();
         });
 
-        /* --- BAZA DANYCH ZE ZDJĘCIAMI I NOWYM LINKIEM YT --- */
-        let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db_v4")) || [
+        /* --- BAZA DANYCH ZE ZDJĘCIAMI --- */
+        let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db_v3")) || [
             {
                 id: 0,
                 title: "Mushoku Tensei: Jobless Reincarnation",
@@ -525,8 +515,9 @@
                 score: "9.4",
                 tags: ["fantasy", "action"],
                 episodes: [
-                    { num: 1, title: "Płoń jasno, wściekły psie!", url: "https://www.youtube.com/embed/k5VxfJpzy1Q?autoplay=1&fullscreen=1", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "System", text: "Świetna seria!"}] },
-                    { num: 2, title: "Szekaj, wściekły psie!", url: "https://www.youtube.com/embed/k5VxfJpzy1Q?autoplay=1&fullscreen=1", flags: "🇵🇱 🇯🇵", comments: [] }
+                    { num: 1, title: "Płoń jasno, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "System", text: "Świetna seria!"}] },
+                    { num: 2, title: "Szekaj, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵", comments: [] },
+                    { num: 3, title: "Życie w domu", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇬🇧", comments: [] }
                 ]
             },
             {
@@ -539,21 +530,21 @@
                 score: "9.1",
                 tags: ["action", "fantasy"],
                 episodes: [
-                    { num: 1, title: "Departure x and x Friends", url: "https://www.youtube.com/embed/k5VxfJpzy1Q?autoplay=1&fullscreen=1", flags: "🇵🇱 🇯🇵", comments: [] }
+                    { num: 1, title: "Departure x and x Friends", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵", comments: [] },
+                    { num: 2, title: "Test x of x Tests", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵", comments: [] }
                 ]
             },
             {
                 id: 2,
                 title: "Alya Sometimes Hides Her Feelings in Russian",
-                poster: "https://images8.alphacoders.com/137/thumb-1920-1371390.jpeg",
+                poster: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcS-OYBzFgbxka3FmJhJSd6jjYWHqA0oqbdtKthBtcSwLqKHxtK3WaFHJIDuubrobFN_3fGS0YS0DItmAeE",
                 year: "2024",
                 status: "completed",
                 studio: "Doga Kobo",
-                score: "9.8",
+                score: "8.6",
                 tags: ["romance"],
                 episodes: [
-                    { num: 1, title: "Rumi i rosyjskie słówka (Pełny ekran)", url: "https://www.youtube.com/embed/k5VxfJpzy1Q?autoplay=1&fullscreen=1", flags: "🇵🇱 🇯🇵", comments: [{author: "AlyaFan", text: "Najlepszy motyw!"}] },
-                    { num: 2, title: "Sekretne wyznanie po rosyjsku", url: "https://www.youtube.com/embed/k5VxfJpzy1Q?autoplay=1&fullscreen=1", flags: "🇵🇱 🇯🇵", comments: [] }
+                    { num: 1, title: "Rumi i rosyjskie słówka", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵", comments: [] }
                 ]
             }
         ];
@@ -562,12 +553,13 @@
         let currentAnimeIndex = 0;
         let currentEpIndex = 0;
         let watchLaterList = JSON.parse(localStorage.getItem("basokuda_watchlater")) || [];
+        let autoPlayNextEnabled = true;
 
         function renderGrid() {
             const grid = document.getElementById("animeGrid");
             grid.innerHTML = "";
             
-            animeDatabase.forEach((anime, idx) => {
+            animeDatabase.forEach((anime) => {
                 if (currentFilter !== 'all') {
                     if (currentFilter === 'ongoing' && anime.status !== 'ongoing') return;
                     if (currentFilter === 'completed' && anime.status !== 'completed') return;
@@ -676,7 +668,7 @@
             document.getElementById("currentEpTitle").textContent = `Odcinek ${ep.num}: ${ep.title}`;
             
             const container = document.getElementById("videoContainer");
-            container.innerHTML = `<iframe src="${ep.url}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen" allowfullscreen></iframe>`;
+            container.innerHTML = `<iframe src="${ep.url}" allowfullscreen></iframe>`;
             
             renderComments();
         }
@@ -704,31 +696,68 @@
 
         function addComment() {
             const input = document.getElementById("newCommentInput");
-            const text = input.value.trim();
-            if (!text) return;
+            const val = input.value.trim();
+            if (!val) return;
 
             const anime = animeDatabase.find(a => a.id === currentAnimeIndex);
             const ep = anime.episodes[currentEpIndex];
             if (!ep.comments) ep.comments = [];
 
-            ep.comments.push({ author: "Widz", text: text });
+            ep.comments.push({
+                author: "Widz",
+                text: val
+            });
+
             input.value = "";
             renderComments();
-            localStorage.setItem("basokuda_db_v4", JSON.stringify(animeDatabase));
+            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
         }
 
         function toggleCommentsDrawer() {
             document.getElementById("commentsDrawer").classList.toggle("open");
         }
 
-        function toggleRandomAnime() {
-            if (animeDatabase.length === 0) return;
-            const randomId = Math.floor(Math.random() * animeDatabase.length);
-            openPlayerModal(randomId);
+        function toggleAutoplayNext() {
+            autoPlayNextEnabled = !autoPlayNextEnabled;
+            document.getElementById("autoPlayStatus").textContent = autoPlayNextEnabled ? "WŁ" : "WYŁ";
         }
 
-        function openAdminModal() {
+        function playNextEpisode() {
+            const anime = animeDatabase.find(a => a.id === currentAnimeIndex);
+            if (currentEpIndex + 1 < anime.episodes.length) {
+                selectEpisode(currentEpIndex + 1);
+            } else {
+                alert("To już ostatni dostępny odcinek tej serii!");
+            }
+        }
+
+        function cyclePlayerSource() {
+            alert("Przełączono na alternatywny serwer strumieniowy Pro.");
+        }
+
+        function toggleTheaterMode() {
+            const modal = document.getElementById("playerModal");
+            if (modal.style.gridTemplateColumns === "0px 1fr") {
+                modal.style.gridTemplateColumns = "350px 1fr";
+            } else {
+                modal.style.gridTemplateColumns = "0px 1fr";
+            }
+        }
+
+        function markAsWatchedCurrent() {
+            alert("Oznaczono odcinek jako obejrzany i zapisano postęp!");
+        }
+
+        function toggleRandomAnime() {
+            if (animeDatabase.length === 0) return;
+            const randomIdx = Math.floor(Math.random() * animeDatabase.length);
+            openPlayerModal(randomIdx);
+        }
+
+        /* --- LOGOWANIE I PANEL ADMINA --- */
+        function openAdminLoginModal() {
             document.getElementById("adminLoginModal").style.display = "flex";
+            document.getElementById("adminPasswordInput").value = "";
         }
 
         function closeAdminLoginModal() {
@@ -736,41 +765,40 @@
         }
 
         function verifyAdminPassword() {
-            const pwd = document.getElementById("adminPasswordInput").value;
-            // Proste zabezpieczenie hasłem
-            if (pwd === "admin123" || pwd === "basokuda") {
+            const pass = document.getElementById("adminPasswordInput").value;
+            // Domyślne hasło administratora (możesz zmienić wg uznania)
+            if (pass === "admin123" || pass === "basokuda") {
                 closeAdminLoginModal();
-                document.getElementById("adminPasswordInput").value = "";
-                document.getElementById("adminModal").style.display = "flex";
-                populateAdminSelects();
+                openAdminModal();
             } else {
                 alert("Nieprawidłowe hasło administratora!");
             }
+        }
+
+        function openAdminModal() {
+            const select = document.getElementById("adminAnimeSelect");
+            select.innerHTML = "";
+            animeDatabase.forEach(a => {
+                const opt = document.createElement("option");
+                opt.value = a.id;
+                opt.textContent = a.title;
+                select.appendChild(opt);
+            });
+            updateDeleteEpisodeSelect();
+            document.getElementById("adminModal").style.display = "flex";
         }
 
         function closeAdminModal() {
             document.getElementById("adminModal").style.display = "none";
         }
 
-        function populateAdminSelects() {
-            const select = document.getElementById("adminAnimeSelect");
-            select.innerHTML = "";
-            animeDatabase.forEach(anime => {
-                const opt = document.createElement("option");
-                opt.value = anime.id;
-                opt.textContent = anime.title;
-                select.appendChild(opt);
-            });
-            updateDeleteEpisodeSelect();
-        }
-
         function updateDeleteEpisodeSelect() {
-            const animeId = document.getElementById("adminAnimeSelect").value;
-            const anime = animeDatabase.find(a => a.id == animeId);
+            const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
+            const anime = animeDatabase.find(a => a.id === animeId);
             const delSelect = document.getElementById("adminDeleteEpSelect");
             delSelect.innerHTML = "";
+            if (!anime) return;
 
-            if (!anime || !anime.episodes) return;
             anime.episodes.forEach((ep, idx) => {
                 const opt = document.createElement("option");
                 opt.value = idx;
@@ -780,7 +808,7 @@
         }
 
         function addNewEpisode() {
-            const animeId = document.getElementById("adminAnimeSelect").value;
+            const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
             const num = parseInt(document.getElementById("adminEpNum").value);
             const title = document.getElementById("adminEpTitle").value.trim();
             const url = document.getElementById("adminEpUrl").value.trim();
@@ -790,10 +818,11 @@
                 return;
             }
 
-            const anime = animeDatabase.find(a => a.id == animeId);
-            anime.episodes.push({ num: num, title: title, url: url, flags: "🇵🇱 🇯🇵", comments: [] });
-            localStorage.setItem("basokuda_db_v4", JSON.stringify(animeDatabase));
-            alert("Dodano odcinek pomyślnie!");
+            const anime = animeDatabase.find(a => a.id === animeId);
+            anime.episodes.push({ num, title, url, flags: "🇵🇱", comments: [] });
+            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+            
+            alert("Dodano nowy odcinek pomyślnie!");
             document.getElementById("adminEpNum").value = "";
             document.getElementById("adminEpTitle").value = "";
             document.getElementById("adminEpUrl").value = "";
@@ -802,18 +831,16 @@
         }
 
         function deleteEpisode() {
-            const animeId = document.getElementById("adminAnimeSelect").value;
-            const epIdx = document.getElementById("adminDeleteEpSelect").value;
-
-            const anime = animeDatabase.find(a => a.id == animeId);
-            if (!anime || anime.episodes.length <= 1) {
-                alert("Anime musi posiadać przynajmniej jeden odcinek!");
-                return;
-            }
+            const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
+            const epIdx = parseInt(document.getElementById("adminDeleteEpSelect").value);
+            
+            const anime = animeDatabase.find(a => a.id === animeId);
+            if (!anime || isNaN(epIdx)) return;
 
             anime.episodes.splice(epIdx, 1);
-            localStorage.setItem("basokuda_db_v4", JSON.stringify(animeDatabase));
-            alert("Usunięto odcinek.");
+            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+            
+            alert("Usunięto wybrany odcinek.");
             updateDeleteEpisodeSelect();
             renderGrid();
         }
@@ -826,54 +853,33 @@
             dlAnchorElem.click();
         }
 
+        /* --- LISTA "DO OBEJRZENIA" --- */
         function openWatchLaterModal() {
+            const list = document.getElementById("watchLaterList");
+            list.innerHTML = "";
+            
+            if (watchLaterList.length === 0) {
+                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding: 20px;">Twoja lista jest pusta.</div>';
+            } else {
+                watchLaterList.forEach(id => {
+                    const anime = animeDatabase.find(a => a.id === id);
+                    if (anime) {
+                        const item = document.createElement("div");
+                        item.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:8px 12px; border-radius:6px;";
+                        item.innerHTML = `<span>${anime.title}</span> <button class="btn btn-primary" style="font-size:11px; padding:4px 8px;" onclick="openPlayerModal(${anime.id}); closeWatchLaterModal();">Oglądaj</button>`;
+                        list.appendChild(item);
+                    }
+                });
+            }
             document.getElementById("watchLaterModal").style.display = "flex";
-            renderWatchLaterList();
         }
 
         function closeWatchLaterModal() {
             document.getElementById("watchLaterModal").style.display = "none";
         }
 
-        function renderWatchLaterList() {
-            const list = document.getElementById("watchLaterList");
-            list.innerHTML = "";
-            if (watchLaterList.length === 0) {
-                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center;">Twoja lista do obejrzenia jest pusta.</div>';
-                return;
-            }
-            // Implementacja wyświetlania listy...
-        }
-
         function updateWatchLaterCounter() {
             document.getElementById("watchLaterCount").textContent = watchLaterList.length;
-        }
-
-        function markAsWatchedCurrent() {
-            alert("Oznaczono odcinek jako obejrzany!");
-        }
-
-        function playNextEpisode() {
-            const anime = animeDatabase.find(a => a.id === currentAnimeIndex);
-            if (currentEpIndex + 1 < anime.episodes.length) {
-                selectEpisode(currentEpIndex + 1);
-            } else {
-                alert("To ostatni dostępny odcinek tej serii!");
-            }
-        }
-
-        function cyclePlayerSource() {
-            alert("Przełączono na zapasowy serwer Pro (1080p Ultra).");
-        }
-
-        function toggleTheaterMode() {
-            alert("Tryb kinowy aktywowany.");
-        }
-
-        let autoPlay = true;
-        function toggleAutoplayNext() {
-            autoPlay = !autoPlay;
-            document.getElementById("autoPlayStatus").textContent = autoPlay ? "WŁ" : "WYŁ";
         }
     </script>
 </body>
