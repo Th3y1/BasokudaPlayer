@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BasokudaPlayer - Odtwarzacz Anime</title>
+    <title>BasokudaPlayer - Alya Edition</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --bg-main: #0f111a;
+            --bg-card: #1a1d2e;
+            --accent-pink: #f472b6;
+            --accent-blue: #38bdf8;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            background-color: #0b0c10;
-            color: #c5c6c7;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
@@ -22,27 +27,91 @@
             min-height: 100vh;
         }
 
+        /* Ekran Logowania Google (Blokada) */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 17, 26, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid var(--accent-pink);
+            text-align: center;
+            box-shadow: 0 0 30px rgba(244, 114, 182, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--accent-blue);
+            background: var(--bg-main);
+            color: #fff;
+            outline: none;
+            text-align: center;
+        }
+
+        .login-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .login-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
+
+        /* Nagłówek */
         header {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-bottom: 20px;
-            border-bottom: 2px solid #1f2833;
+            border-bottom: 2px solid #2d3748;
             margin-bottom: 20px;
             gap: 15px;
             flex-wrap: wrap;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #a855f7;
-            text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Sekcja Wyszukiwarki */
+        .user-status {
+            font-size: 0.9rem;
+            background: #2d3748;
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-blue);
+        }
+
+        /* Wyszukiwarka */
         .search-box {
             position: relative;
             width: 100%;
@@ -53,56 +122,58 @@
             width: 100%;
             padding: 10px 15px;
             border-radius: 8px;
-            border: 1px solid #45a29e;
-            background: #1f2833;
+            border: 1px solid var(--accent-blue);
+            background: var(--bg-card);
             color: #fff;
             outline: none;
-            font-size: 0.95rem;
         }
 
-        .search-box input:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
-        }
-
-        /* Pasek z wynikami wyszukiwania */
         .search-results {
             position: absolute;
-            top: 110%;
-            left: 0;
-            width: 100%;
-            background: #1f2833;
-            border: 1px solid #a855f7;
+            top: 110%; left: 0; width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-pink);
             border-radius: 8px;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
             z-index: 100;
             display: none;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
         }
 
         .search-results div {
-            padding: 10px 15px;
+            padding: 10px;
             cursor: pointer;
-            border-bottom: 1px solid #27272a;
-            color: #fff;
-            font-weight: 500;
-            transition: background 0.2s;
+            border-bottom: 1px solid #2d3748;
         }
 
-        .search-results div:hover {
-            background: #a855f7;
+        .search-results div:hover { background: var(--accent-pink); color: #000; }
+
+        /* Sekcja Ogłoszeń */
+        .announcement-bar {
+            width: 100%;
+            max-width: 1100px;
+            background: linear-gradient(90deg, rgba(244,114,182,0.15), rgba(56,189,248,0.15));
+            border: 1px solid var(--accent-pink);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
 
+        .announcement-bar h3 { color: var(--accent-pink); font-size: 1.1rem; margin-bottom: 5px; }
+
+        /* Layout Główny */
         .main-container {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 300px;
             gap: 20px;
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
         }
 
-        /* Odtwarzacz */
+        @media (max-width: 850px) {
+            .main-container { grid-template-columns: 1fr; }
+        }
+
         .player-wrapper {
             position: relative;
             padding-bottom: 56.25%;
@@ -110,212 +181,303 @@
             background: #000;
             border-radius: 12px;
             overflow: hidden;
-            border: 2px solid #1f2833;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            border: 2px solid #2d3748;
         }
 
         .player-wrapper iframe {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+            top: 0; left: 0; width: 100%; height: 100%; border: none;
         }
 
-        .anime-info {
-            background: #1f2833;
+        .anime-info, .playlist, .comments-section, .recommended, .admin-panel {
+            background: var(--bg-card);
             padding: 20px;
             border-radius: 12px;
-            border: 1px solid #27272a;
-        }
-
-        .anime-title {
-            font-size: 1.5rem;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-
-        .anime-desc {
-            font-size: 0.95rem;
-            color: #c5c6c7;
-            line-height: 1.5;
-        }
-
-        .playlist {
-            background: #1f2833;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #27272a;
-        }
-
-        .playlist h2 {
-            font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #fff;
-            border-left: 4px solid #a855f7;
-            padding-left: 10px;
+            border: 1px solid #2d3748;
+            margin-top: 15px;
         }
 
         .episodes-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
             gap: 10px;
+            margin-top: 10px;
         }
 
         .episode-btn {
-            background: #0b0c10;
+            background: var(--bg-main);
             color: #fff;
-            border: 1px solid #45a29e;
-            padding: 12px;
+            border: 1px solid var(--accent-blue);
+            padding: 10px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s ease-in-out;
-            text-align: center;
         }
 
-        .episode-btn:hover, .episode-btn.active {
-            background: #a855f7;
-            border-color: #a855f7;
+        .episode-btn.active, .episode-btn:hover {
+            background: var(--accent-pink);
+            border-color: var(--accent-pink);
+            color: #000;
         }
 
-        footer {
-            margin-top: auto;
-            padding-top: 30px;
-            font-size: 0.85rem;
-            color: #666;
+        /* Komentarze */
+        .comments-section input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2d3748;
+            background: var(--bg-main);
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .comment-item {
+            background: var(--bg-main);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Panel Dev / Admina */
+        .dev-btn {
+            background: var(--accent-pink);
+            color: #000;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .admin-panel input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            border: 1px solid #2d3748;
+            background: var(--bg-main);
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
+    <!-- Zabezpieczenie Logowania Google -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color: var(--accent-pink); margin-bottom: 10px;">BasokudaPlayer</h2>
+            <p style="color: var(--text-muted);">Zaloguj się kontem Google, aby uzyskać dostęp do serwisu.</p>
+            <input type="email" id="google-email-input" placeholder="Wpisz Twój e-mail Google..." value="dogdeyy@gmail.com">
+            <button class="login-btn" onclick="loginWithGoogle()">
+                <img src="https://www.google.com/favicon.ico" width="18" alt="G">
+                Zaloguj się przez Google
+            </button>
+        </div>
+    </div>
+
     <header>
-        <div class="logo">⚡ BasokudaPlayer</div>
-        <!-- Pasek Wyszukiwania -->
+        <div class="logo">BasokudaPlayer</div>
+        
         <div class="search-box">
             <input type="text" id="search-input" placeholder="Szukaj anime..." oninput="filterAnime()">
             <div id="search-results" class="search-results"></div>
         </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="user-status" id="user-role">Ranga: VIP 👑</span>
+            <button class="dev-btn" onclick="toggleAdminPanel()">Narzędzia Dev 🛠️</button>
+        </div>
     </header>
 
+    <!-- Ogłoszenia na Start -->
+    <div class="announcement-bar">
+        <h3>📢 Ogłoszenia i Nowości</h3>
+        <p>Witaj na BasokudaPlayer! Trwa darmowa promocja rangi VIP dla wszystkich użytkowników. Dodaliśmy edycję Alya-style oraz wyszukiwarkę na żywo!</p>
+    </div>
+
+    <!-- Panel Deweloperski (Edycja na stronie dla dogdeyy@gmail.com) -->
+    <div class="admin-panel" id="admin-panel" style="display: none; width: 100%; max-width: 1100px; margin-bottom: 20px;">
+        <h3 style="color: var(--accent-blue); margin-bottom: 10px;">🛠️ Narzędzia Deweloperskie (Dostęp: dogdeyy@gmail.com)</h3>
+        <input type="text" id="dev-anime-title" placeholder="Tytuł nowego Anime">
+        <input type="text" id="dev-anime-desc" placeholder="Opis anime">
+        <input type="text" id="dev-ep-url" placeholder="Link Embed Odcinka 1">
+        <button class="episode-btn" onclick="addAnimeFromDev()" style="margin-top: 8px;">Dodaj Anime do Strony</button>
+    </div>
+
     <div class="main-container">
-        <div class="player-wrapper">
-            <iframe id="video-player" src="" allowfullscreen></iframe>
+        <!-- Lewa kolumna: Odtwarzacz + Info + Komentarze -->
+        <div>
+            <div class="player-wrapper">
+                <iframe id="video-player" src="" allowfullscreen></iframe>
+            </div>
+
+            <div class="anime-info">
+                <h1 id="current-title" style="color: var(--accent-pink);">Wybierz anime</h1>
+                <p id="current-desc" style="margin-top: 8px; color: var(--text-muted);"></p>
+            </div>
+
+            <div class="comments-section">
+                <h3 style="margin-bottom: 10px;">💬 Komentarze</h3>
+                <input type="text" id="comment-input" placeholder="Napisz komentarz...">
+                <button class="episode-btn" onclick="addComment()">Dodaj komentarz</button>
+                <div id="comments-list"></div>
+            </div>
         </div>
 
-        <div class="anime-info">
-            <h1 class="anime-title" id="current-title">Wybierz anime</h1>
-            <p class="anime-desc" id="current-desc">Użyj wyszukiwarki lub wybierz serię z listy.</p>
-        </div>
+        <!-- Prawa kolumna: Odcinki + Polecajki -->
+        <div>
+            <div class="playlist">
+                <h3 style="color: var(--accent-blue);">Odcinki</h3>
+                <div class="episodes-grid" id="episodes-list"></div>
+            </div>
 
-        <div class="playlist">
-            <h2>Lista Odcinków</h2>
-            <div class="episodes-grid" id="episodes-list">
-                <!-- Odcinki generują się automatycznie po wybraniu anime -->
+            <div class="recommended">
+                <h3 style="color: var(--accent-pink); margin-bottom: 10px;">🔥 Polecane Anime</h3>
+                <div id="recommended-list"></div>
             </div>
         </div>
     </div>
 
-    <footer>
-        BasokudaPlayer &copy; 2026 – Własny Odtwarzacz Anime
-    </footer>
-
     <script>
-        // TUTAJ DODAJSZ SWOJE ANIME I LINKI
-        const animeDatabase = [
+        let loggedInUserEmail = "";
+
+        // Logowanie Google
+        function loginWithGoogle() {
+            const emailInput = document.getElementById('google-email-input').value.trim();
+            if(!emailInput) return alert("Proszę podać adres e-mail!");
+            
+            loggedInUserEmail = emailInput.toLowerCase();
+            document.getElementById('login-overlay').style.display = 'none';
+
+            // Zmiana rangi w nagłówku w zależności od e-maila
+            const roleBadge = document.getElementById('user-role');
+            if(loggedInUserEmail === "dogdeyy@gmail.com") {
+                roleBadge.innerText = "Ranga: Właściciel / Dev 👑";
+                roleBadge.style.borderColor = "var(--accent-pink)";
+            } else {
+                roleBadge.innerText = "Ranga: VIP 👑";
+            }
+        }
+
+        // Baza danych Anime
+        let animeDatabase = [
+            {
+                title: "Alya Sometimes Hides Her Feelings in Russian",
+                desc: "Alya to piękna dziewczyna, która od czasu do czasu rzuca uwagami po rosyjsku, myśląc że nikt jej nie rozumie...",
+                episodes: [
+                    { ep: "Odc 1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
             {
                 title: "Isekai Yakkyoku",
-                desc: "Młody farmaceuta reinkarnuje się w innym świecie z nieskończonymi zasobami many i tworzy nowoczesną medycynę.",
+                desc: "Młody farmaceuta reinkarnuje się w innym świecie z ogromną mocą medyczną.",
                 episodes: [
-                    { ep: "Odcinek 1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
-                    { ep: "Odcinek 2", url: "LINK_DO_EMBED_ODC_2" },
-                    { ep: "Odcinek 3", url: "LINK_DO_EMBED_ODC_3" }
-                ]
-            },
-            {
-                title: "Overlord",
-                desc: "Gracz zostaje uwięziony w swojej ulubionej grze MMORPG jako potężny kościsty czarnoksiężnik Ainz Ooal Gown.",
-                episodes: [
-                    { ep: "Odcinek 1", url: "LINK_DO_OVERLORD_1" },
-                    { ep: "Odcinek 2", url: "LINK_DO_OVERLORD_2" }
-                ]
-            },
-            {
-                title: "The Eminence in Shadow",
-                desc: "Chłopiec odradza się w świecie magii i tworzy tajną organizację Shadow Garden.",
-                episodes: [
-                    { ep: "Odcinek 1", url: "LINK_DO_EMINENCE_1" }
+                    { ep: "Odc 1", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
                 ]
             }
         ];
 
         let currentAnime = animeDatabase[0];
 
-        // Funkcja ładowania wybranego anime
         function loadAnime(anime) {
             currentAnime = anime;
+            document.getElementById('current-title').innerText = anime.title;
             document.getElementById('current-desc').innerText = anime.desc;
             
-            const episodesContainer = document.getElementById('episodes-list');
-            episodesContainer.innerHTML = '';
+            const epList = document.getElementById('episodes-list');
+            epList.innerHTML = '';
 
-            anime.episodes.forEach((episode, index) => {
+            anime.episodes.forEach((ep, i) => {
                 const btn = document.createElement('button');
-                btn.className = 'episode-btn' + (index === 0 ? ' active' : '');
-                btn.innerText = episode.ep;
-                btn.onclick = function() {
-                    changeVideo(episode.url, episode.ep, btn);
+                btn.className = 'episode-btn' + (i === 0 ? ' active' : '');
+                btn.innerText = ep.ep;
+                btn.onclick = () => {
+                    document.getElementById('video-player').src = ep.url;
+                    document.querySelectorAll('.episode-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
                 };
-                episodesContainer.appendChild(btn);
+                epList.appendChild(btn);
             });
 
             if(anime.episodes.length > 0) {
-                changeVideo(anime.episodes[0].url, anime.episodes[0].ep, episodesContainer.children[0]);
+                document.getElementById('video-player').src = anime.episodes[0].url;
             }
         }
 
-        function changeVideo(url, epTitle, btn) {
-            document.getElementById('video-player').src = url;
-            document.getElementById('current-title').innerText = currentAnime.title + " – " + epTitle;
-
-            let buttons = document.querySelectorAll('.episode-btn');
-            buttons.forEach(b => b.classList.remove('active'));
-            if(btn) btn.classList.add('active');
-        }
-
-        // Logika Wyszukiwarki
+        // Wyszukiwarka
         function filterAnime() {
             const query = document.getElementById('search-input').value.toLowerCase();
-            const resultsBox = document.getElementById('search-results');
-            resultsBox.innerHTML = '';
+            const resBox = document.getElementById('search-results');
+            resBox.innerHTML = '';
 
-            if (query.trim() === '') {
-                resultsBox.style.display = 'none';
+            if(!query) { resBox.style.display = 'none'; return; }
+
+            const filtered = animeDatabase.filter(a => a.title.toLowerCase().includes(query));
+            if(filtered.length > 0) {
+                resBox.style.display = 'block';
+                filtered.forEach(a => {
+                    const div = document.createElement('div');
+                    div.innerText = a.title;
+                    div.onclick = () => { loadAnime(a); resBox.style.display = 'none'; };
+                    resBox.appendChild(div);
+                });
+            } else { resBox.style.display = 'none'; }
+        }
+
+        // Komentarze
+        function addComment() {
+            const input = document.getElementById('comment-input');
+            if(!input.value) return;
+            const list = document.getElementById('comments-list');
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+            div.innerHTML = `<strong>${loggedInUserEmail || 'Użytkownik VIP'}:</strong> ${input.value}`;
+            list.prepend(div);
+            input.value = '';
+        }
+
+        // Zabezpieczone Narzędzia Dev (Tylko dla dogdeyy@gmail.com)
+        function toggleAdminPanel() {
+            if (loggedInUserEmail !== "dogdeyy@gmail.com") {
+                alert("Dostęp zabroniony! Tylko konto dogdeyy@gmail.com posiada uprawnienia deweloperskie.");
                 return;
             }
 
-            const filtered = animeDatabase.filter(anime => anime.title.toLowerCase().includes(query));
-
-            if (filtered.length > 0) {
-                resultsBox.style.display = 'block';
-                filtered.forEach(anime => {
-                    const div = document.createElement('div');
-                    div.innerText = anime.title;
-                    div.onclick = () => {
-                        loadAnime(anime);
-                        resultsBox.style.display = 'none';
-                        document.getElementById('search-input').value = anime.title;
-                    };
-                    resultsBox.appendChild(div);
-                });
-            } else {
-                resultsBox.style.display = 'none';
-            }
+            const panel = document.getElementById('admin-panel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
 
-        // Domyślne załadowanie pierwszego anime
+        function addAnimeFromDev() {
+            const title = document.getElementById('dev-anime-title').value;
+            const desc = document.getElementById('dev-anime-desc').value;
+            const url = document.getElementById('dev-ep-url').value;
+
+            if(!title || !url) return alert('Wpisz tytuł i link!');
+
+            const newAnime = { title, desc, episodes: [{ ep: "Odc 1", url }] };
+            animeDatabase.push(newAnime);
+            loadAnime(newAnime);
+            renderRecommended();
+            alert('Dodano nowe anime!');
+        }
+
+        function renderRecommended() {
+            const recList = document.getElementById('recommended-list');
+            recList.innerHTML = '';
+            animeDatabase.forEach(a => {
+                const p = document.createElement('p');
+                p.style.cursor = 'pointer';
+                p.style.marginTop = '6px';
+                p.innerText = "• " + a.title;
+                p.onclick = () => loadAnime(a);
+                recList.appendChild(p);
+            });
+        }
+
+        // Start
         loadAnime(animeDatabase[0]);
+        renderRecommended();
     </script>
 </body>
 </html>
