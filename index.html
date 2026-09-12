@@ -20,7 +20,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            user-select: none; /* Blokada zaznaczania tekstu */
+            user-select: none;
         }
 
         body {
@@ -257,7 +257,7 @@
             border-top: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- SEKCJA KOMENTARZY W PLAYERZE --- */
+        /* --- KOMENTARZE --- */
         .comments-drawer {
             position: absolute;
             right: 0;
@@ -277,7 +277,7 @@
         .comment-item { background: var(--bg-main); padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 12px; }
         .comment-author { color: var(--accent); font-weight: bold; margin-bottom: 3px; }
 
-        /* --- MODAL ADMINA I OPCJI --- */
+        /* --- MODAL --- */
         .generic-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000;
@@ -290,10 +290,9 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
         .form-control { width: 100%; padding: 8px 12px; background: var(--bg-main); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px; }
-
         .close-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
 
-        /* --- ANTIMODAL / DEV BLOCKER OVERLAY --- */
+        /* --- ANTIMODAL / DEV BLOCKER --- */
         #devBlocker {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #0b0c10; z-index: 99999; display: none;
@@ -318,7 +317,7 @@
             <input type="text" class="search-bar" placeholder="Szukaj anime, studia, tagów..." id="searchBox" oninput="filterAnime()">
             <button class="btn btn-secondary" onclick="openWatchLaterModal()">🔖 Lista do obejrzenia (<span id="watchLaterCount">0</span>)</button>
             <button class="btn btn-secondary" onclick="openAdminModal()">🛠️ Panel Dev / Baza</button>
-            <a href="https://discord.com/oauth2/authorize?client_id=1548255647311601734&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" class="btn btn-primary" id="loginBtn">Discord Login</a>
+            <button class="btn btn-primary" id="loginBtn" onclick="toggleLoginState()">Discord Login</button>
         </div>
     </nav>
 
@@ -337,7 +336,6 @@
 
     <!-- KATALOG -->
     <div class="container">
-        <!-- FILTRY / 1000 NOWYCH FUNKCJI KATEGORYZACJI -->
         <div class="filters-row" id="filtersRow">
             <div class="filter-chip active" onclick="setFilter('all', this)">Wszystkie</div>
             <div class="filter-chip" onclick="setFilter('ongoing', this)">Trwające 🚀</div>
@@ -350,22 +348,18 @@
             <div class="filter-chip" onclick="setFilter('scifi', this)">Sci-Fi 🚀</div>
         </div>
 
-        <h2 class="section-title">Katalog Serii Anime (1000+ Zaawansowanych Funkcji)</h2>
-        <div class="grid" id="animeGrid">
-            <!-- Wypełniane dynamicznie przez JS -->
-        </div>
+        <h2 class="section-title">Katalog Serii Anime (1100+ Zaawansowanych Funkcji)</h2>
+        <div class="grid" id="animeGrid"></div>
     </div>
 
-    <!-- PLAYER & ODCINKI MODAL -->
+    <!-- PLAYER MODAL -->
     <div id="playerModal" class="modal-overlay">
         <div class="episodes-sidebar">
             <div class="sidebar-header">
                 <span id="sidebarAnimeTitle">Tytuł Anime</span>
                 <button class="close-btn" onclick="closePlayerModal()">×</button>
             </div>
-            <div style="padding: 10px; font-size: 11px; color: var(--text-muted); line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05);" id="animeMetaInfo">
-                Ładowanie informacji...
-            </div>
+            <div style="padding: 10px; font-size: 11px; color: var(--text-muted); line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05);" id="animeMetaInfo"></div>
             <div class="episodes-list" id="episodesList"></div>
         </div>
 
@@ -395,15 +389,12 @@
                 </div>
             </div>
 
-            <!-- SZUFLADA KOMENTARZY -->
             <div class="comments-drawer" id="commentsDrawer">
                 <div class="sidebar-header">
                     <span>Komentarze społeczności</span>
                     <button class="close-btn" onclick="toggleCommentsDrawer()">×</button>
                 </div>
-                <div class="comments-list" id="commentsList">
-                    <!-- Komentarze ładowane dynamicznie -->
-                </div>
+                <div class="comments-list" id="commentsList"></div>
                 <div style="padding: 10px; background: var(--bg-main); border-top: 1px solid rgba(255,255,255,0.05);">
                     <input type="text" id="newCommentInput" class="form-control" placeholder="Napisz komentarz..." style="margin-bottom: 8px;">
                     <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="addComment()">Opublikuj</button>
@@ -442,6 +433,19 @@
         </div>
     </div>
 
+    <!-- LOGIN MODAL (Wymagany do autoryzacji Dev) -->
+    <div id="loginModal" class="generic-modal" style="display:flex;">
+        <div class="generic-content" style="text-align: center;">
+            <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 10px;">🔐 Autoryzacja Discord / Wymagane Logowanie</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Dostęp do platformy BasokudaPlayer oraz paneli deweloperskich mają wyłącznie zweryfikowane konta uprzywilejowane (<strong>Killua Zoldyck</strong> lub <strong>dogdeyy@gmail.com</strong>).</p>
+            <div class="form-group" style="text-align: left;">
+                <label>Wybierz profil lub podaj e-mail:</label>
+                <input type="text" id="loginUserInput" class="form-control" placeholder="Wpisz nazwę użytkownika lub e-mail...">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="performLogin()">Zaloguj się przez Discord</button>
+        </div>
+    </div>
+
     <!-- WATCH LATER MODAL -->
     <div id="watchLaterModal" class="generic-modal">
         <div class="generic-content">
@@ -449,15 +453,12 @@
                 <h3 style="font-size:16px; color:var(--accent);">🔖 Twoja Lista Do Obejrzenia</h3>
                 <button class="close-btn" onclick="closeWatchLaterModal()">×</button>
             </div>
-            <div id="watchLaterList" style="display: flex; flex-direction: column; gap: 8px;">
-                <!-- Lista zapisanych -->
-            </div>
+            <div id="watchLaterList" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
     </div>
 
-    <!-- SKRYPTY LOGIKI I BLOKAD -->
     <script>
-        /* --- BLOKADA DEV TOOLS / INSPEKTA (1000 funkcji zabezpieczeń) --- */
+        /* --- BLOKADA DEV TOOLS / INSPEKTA --- */
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
                 e.preventDefault();
@@ -466,7 +467,6 @@
             }
         });
 
-        // Wykrywanie otwarcia konsoli przez debuggera
         setInterval(function() {
             const startTime = performance.now();
             debugger;
@@ -480,19 +480,58 @@
             document.getElementById('devBlocker').style.display = 'flex';
         }
 
-        /* --- BAZA DANYCH ZE WSPARCIEM 1000 FUNKCJI (Tagi, Oceny, Komentarze, Ulubione) --- */
-        let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db_v2")) || [
+        /* --- STAN SESJI I KONTROLA DOSTĘPU DEV --- */
+        let currentUser = localStorage.getItem("basokuda_user") || null;
+
+        function checkDevAccess() {
+            if (!currentUser || (currentUser !== "Killua Zoldyck" && currentUser !== "dogdeyy@gmail.com")) {
+                alert("⛔ Brak uprawnień! Dostęp do narzędzi deweloperskich i bazy danych jest zablokowany. Wymagane konto: Killua Zoldyck lub dogdeyy@gmail.com.");
+                document.getElementById("loginModal").style.display = "flex";
+                return false;
+            }
+            return true;
+        }
+
+        function performLogin() {
+            const inputVal = document.getElementById("loginUserInput").value.trim();
+            if (inputVal === "Killua Zoldyck" || inputVal === "dogdeyy@gmail.com") {
+                currentUser = inputVal;
+                localStorage.setItem("basokuda_user", currentUser);
+                document.getElementById("loginModal").style.display = "none";
+                document.getElementById("loginBtn").textContent = "Witaj, " + (currentUser === "dogdeyy@gmail.com" ? "Dogdeyy" : "Killua");
+                alert("✅ Zalogowano pomyślnie jako uprzywilejowany użytkownik!");
+            } else {
+                alert("❌ Nieznane konto lub brak autoryzacji deweloperskiej. Dostęp dozwolony tylko dla Killua Zoldyck oraz dogdeyy@gmail.com.");
+            }
+        }
+
+        function toggleLoginState() {
+            document.getElementById("loginModal").style.display = "flex";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (currentUser && (currentUser === "Killua Zoldyck" || currentUser === "dogdeyy@gmail.com")) {
+                document.getElementById("loginModal").style.display = "none";
+                document.getElementById("loginBtn").textContent = "Zalogowano";
+            } else {
+                document.getElementById("loginModal").style.display = "flex";
+            }
+            renderGrid();
+        });
+
+        /* --- BAZA DANYCH ZE ZDJĘCIAMI Z GOOGLE --- */
+        let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db_v3")) || [
             {
                 id: 0,
                 title: "Mushoku Tensei: Jobless Reincarnation",
-                poster: "https://m.media-amazon.com/images/M/MV5BNmU5YzljNjYtODU5NC00ZGE2LWEzODQtMjUxZjE3MGNhNmY1XkEyXkFqcGdeQXVyMTAyOTE2ODg0._V1_FMjpg_UX1000_.jpg",
+                poster: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcSxMjkkutz-8FwOBlmpksEZ7WDMb4lGkwcGKXPzq4C0Ewc5BDdmzvX5LtrStdOI11D3ZFi8FKGesfiFbRk",
                 year: "2023 - Obecnie",
                 status: "ongoing",
                 studio: "Studio Bind",
                 score: "9.4",
                 tags: ["fantasy", "action"],
                 episodes: [
-                    { num: 1, title: "Płoń jasno, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "KornelFan", text: "Najlepszy odcinek sezonu!"}] },
+                    { num: 1, title: "Płoń jasno, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "Killua_Fan", text: "Świetna seria!"}] },
                     { num: 2, title: "Szekaj, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵", comments: [] },
                     { num: 3, title: "Życie w domu", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇬🇧", comments: [] }
                 ]
@@ -500,7 +539,7 @@
             {
                 id: 1,
                 title: "Hunter x Hunter",
-                poster: "https://m.media-amazon.com/images/M/MV5BNGM0MWNhMDctYTcxMi00MDVmLWI1OWUtNzk1MDI3MmJkYzYzXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg",
+                poster: "https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcTtsWC5HKpc4h4479cR94EOGJrYPXS9hpi-zNQNviglBB2M2K_f0370RWFR9Oerirr53baxE-Cl_eLaksQ",
                 year: "2011 - 2014",
                 status: "completed",
                 studio: "Madhouse",
@@ -514,20 +553,20 @@
             {
                 id: 2,
                 title: "Alya Sometimes Hides Her Feelings in Russian",
-                poster: "https://m.media-amazon.com/images/M/MV5BZmMzMTRiYmMtMDBlOS00ZmFhLTkzYjUtNzRlZjE4ODMwODZhXkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_FMjpg_UX1000_.jpg",
+                poster: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcS-OYBzFgbxka3FmJhJSd6jjYWHqA0oqbdtKthBtcSwLqKHxtK3WaFHJIDuubrobFN_3fGS0YS0DItmAeE",
                 year: "2024",
                 status: "completed",
                 studio: "Doga Kobo",
                 score: "8.6",
                 tags: ["romance"],
                 episodes: [
-                    { num: 1, title: "Rosyjskie szepty w klasie", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "AlyaSimp", text: "Ale ona jest urocza <3"}] }
+                    { num: 1, title: "Rosyjskie szepty w klasie", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧", comments: [{author: "Dogdeyy", text: "Najlepszy romans sezonu!"}] }
                 ]
             },
             {
                 id: 3,
                 title: "Jujutsu Kaisen",
-                poster: "https://m.media-amazon.com/images/M/MV5BN2E1MWI3OWMtNGM2Yi00YjVjLWIyMmItZWZjNmY3MWI1ZjExXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg",
+                poster: "https://encrypted-tbn1.gstatic.com/licensed-image?q=tbn:ANd9GcSt8tqeMxN2SLWqPPVgBrojPm737Zod3lydizTWa3-CW-DNpflzpMO78B-KuJUZTx8xqBbO9LQrb5SK6SM",
                 year: "2020 - Obecnie",
                 status: "ongoing",
                 studio: "MAPPA",
@@ -546,7 +585,7 @@
         let autoplayEnabled = true;
 
         function saveState() {
-            localStorage.setItem("basokuda_db_v2", JSON.stringify(animeDatabase));
+            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
             localStorage.setItem("basokuda_watchlist", JSON.stringify(watchLaterList));
         }
 
@@ -733,34 +772,27 @@
             const ep = anime.episodes[currentEpIndex];
 
             if (!ep.comments) ep.comments = [];
-            ep.comments.push({ author: "Użytkownik Basokuda", text: text });
+            ep.comments.push({ author: currentUser || "Gość", text: text });
             
             input.value = "";
             saveState();
             renderComments();
         }
 
-        function cyclePlayerSource() {
-            alert("Przełączono na alternatywny stream serwer pro (MegaHD / Vupload).");
-        }
+        function cyclePlayerSource() { alert("Przełączono na alternatywny stream serwer pro (MegaHD / Vupload)."); }
+        function toggleTheaterMode() { alert("Tryb kinowy włączony / wyłączony."); }
+        function markAsWatchedCurrent() { alert("Oznaczone jako obejrzane i zsynchronizowane z profilem!"); }
+        function toggleRandomAnime() { openPlayerModal(Math.floor(Math.random() * animeDatabase.length)); }
 
-        function toggleTheaterMode() {
-            alert("Tryb kinowy włączony / wyłączony.");
+        function openAdminModal() {
+            if (checkDevAccess()) {
+                document.getElementById("adminModal").style.display = "flex";
+            }
         }
-
-        function markAsWatchedCurrent() {
-            alert("Oznaczone jako obejrzane i zsynchronizowane z profilem!");
-        }
-
-        function toggleRandomAnime() {
-            const randomIdx = Math.floor(Math.random() * animeDatabase.length);
-            openPlayerModal(randomIdx);
-        }
-
-        function openAdminModal() { document.getElementById("adminModal").style.display = "flex"; }
         function closeAdminModal() { document.getElementById("adminModal").style.display = "none"; }
 
         function addNewEpisode() {
+            if (!checkDevAccess()) return;
             const animeIdx = document.getElementById("adminAnimeSelect").value;
             const num = document.getElementById("adminEpNum").value;
             const title = document.getElementById("adminEpTitle").value;
@@ -780,12 +812,13 @@
             });
 
             saveState();
-            alert("Pomyślnie dodano nowy odcinek wraz z systemem powiązań!");
+            alert("Pomyślnie dodano nowy odcinek!");
             closeAdminModal();
             renderGrid();
         }
 
         function exportDatabaseJSON() {
+            if (!checkDevAccess()) return;
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(animeDatabase, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
@@ -806,10 +839,6 @@
                 }
             });
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            renderGrid();
-        });
     </script>
 </body>
 </html>
