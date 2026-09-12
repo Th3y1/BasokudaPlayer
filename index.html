@@ -3,28 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BasokudaPlayer - Ultimate Anime Hub</title>
+    <title>BasokudaPlayer - Professional Anime Hub</title>
     <style>
         :root {
             --bg-main: #0b0c10;
-            --bg-sec: #1f2833;
-            --accent: #66fcf1;
-            --accent-hover: #45a29e;
+            --bg-sec: #151b22;
+            --bg-panel: #1f2833;
+            --accent: #ff0055;
+            --accent-hover: #e0004b;
             --text-main: #ffffff;
-            --text-muted: #c5c6c7;
-            --admin-color: #ff0055;
-            --card-bg: #151b22;
-        }
-
-        /* Motyw Jasny (opcjonalny) */
-        [data-theme="light"] {
-            --bg-main: #f0f2f5;
-            --bg-sec: #ffffff;
-            --accent: #007bff;
-            --accent-hover: #0056b3;
-            --text-main: #1a1a1a;
-            --text-muted: #65676b;
-            --card-bg: #ffffff;
+            --text-muted: #8c9bab;
+            --blue-player: #2563eb;
         }
 
         * {
@@ -32,7 +21,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
@@ -42,19 +30,13 @@
             overflow-x: hidden;
         }
 
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--bg-sec); border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-hover); }
-
         /* --- NAV BAR --- */
         nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 15px 40px;
-            background-color: var(--bg-main);
-            backdrop-filter: blur(10px);
+            padding: 12px 30px;
+            background-color: var(--bg-sec);
             position: fixed;
             top: 0;
             width: 100%;
@@ -63,32 +45,15 @@
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             color: var(--text-main);
             text-decoration: none;
-            letter-spacing: 1px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .logo span { color: var(--accent); }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .nav-links a:hover { color: var(--accent); }
 
         .nav-right {
             display: flex;
@@ -97,181 +62,191 @@
         }
 
         .search-bar {
-            background-color: var(--bg-sec);
+            background-color: var(--bg-main);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 8px 16px;
+            border-radius: 6px;
+            padding: 6px 12px;
             color: var(--text-main);
             outline: none;
-            width: 180px;
+            width: 220px;
             font-size: 13px;
         }
-        .search-bar:focus { border-color: var(--accent); width: 220px; }
+        .search-bar:focus { border-color: var(--accent); }
 
-        .nav-icon-btn {
-            background: var(--bg-sec);
-            border: none;
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .nav-icon-btn:hover { background: var(--accent); color: var(--bg-main); }
-
-        .btn-login, .btn-dev, .btn-logout {
-            padding: 8px 16px;
-            border-radius: 8px;
+        .btn {
+            padding: 6px 14px;
+            border-radius: 6px;
             border: none;
             cursor: pointer;
             font-weight: bold;
-            text-decoration: none;
             font-size: 13px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        .btn-login { background-color: var(--accent); color: var(--bg-main); }
-        .btn-logout { background-color: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); display: none; }
-        .btn-dev { background-color: var(--admin-color); color: #fff; display: none; }
+        .btn-primary { background-color: var(--accent); color: #fff; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-secondary { background-color: rgba(255,255,255,0.1); color: #fff; }
+        .btn-secondary:hover { background-color: rgba(255,255,255,0.2); }
 
         /* --- HERO BANNER --- */
         .hero {
             position: relative;
-            height: 80vh;
+            height: 70vh;
             display: flex;
             align-items: flex-end;
-            padding: 60px 40px;
-            background: linear-gradient(to top, var(--bg-main) 0%, transparent 60%, rgba(0,0,0,0.8) 100%), 
+            padding: 40px;
+            background: linear-gradient(to top, var(--bg-main) 0%, rgba(11,12,16,0.6) 60%, rgba(11,12,16,0.9) 100%), 
                         url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920&auto=format&fit=crop') center/cover;
-            margin-top: 60px;
+            margin-top: 50px;
         }
-        .hero-content { max-width: 650px; z-index: 2; }
-        .hero-tag {
-            background-color: var(--accent);
-            color: var(--bg-main);
-            padding: 4px 10px;
-            font-weight: 800;
-            font-size: 11px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-        .hero-title { font-size: 48px; font-weight: 900; margin-bottom: 15px; line-height: 1.1; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
-        .hero-desc { color: #e0e0e0; font-size: 15px; line-height: 1.5; margin-bottom: 25px; text-shadow: 0 1px 5px rgba(0,0,0,0.8); }
-        .hero-btns { display: flex; gap: 12px; }
+        .hero-content { max-width: 600px; z-index: 2; }
+        .hero-title { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
+        .hero-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+
+        /* --- KATALOG --- */
+        .container { padding: 30px; }
+        .section-title { font-size: 20px; font-weight: bold; margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px; }
         
-        .btn-main { background-color: #fff; color: #000; padding: 10px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .btn-secondary { background-color: rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; backdrop-filter: blur(5px); }
-
-        /* --- FILTRY KATEGORII --- */
-        .categories-bar {
-            display: flex;
-            gap: 10px;
-            padding: 20px 40px;
-            overflow-x: auto;
-        }
-        .cat-chip {
-            background-color: var(--bg-sec);
-            color: var(--text-muted);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .cat-chip.active, .cat-chip:hover { background-color: var(--accent); color: var(--bg-main); }
-
-        /* --- SEKCJE I KARTY --- */
-        .section-container { padding: 30px 40px; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .section-title { font-size: 22px; font-weight: bold; border-left: 4px solid var(--accent); padding-left: 12px; }
-
-        .card-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 20px;
         }
 
-        .card {
-            background-color: var(--card-bg);
+        .anime-card {
+            background-color: var(--bg-sec);
             border-radius: 8px;
-            height: 300px;
-            position: relative;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            background-size: cover;
-            background-position: center;
+            transition: transform 0.2s;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.4); }
+        .anime-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .anime-poster { height: 240px; background-size: cover; background-position: center; position: relative; }
+        .anime-badge { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 2px 6px; border-radius: 4px; font-size: 10px; color: var(--accent); font-weight: bold; }
+        .anime-info { padding: 12px; }
+        .anime-name { font-size: 14px; font-weight: bold; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .anime-details { font-size: 11px; color: var(--text-muted); }
 
-        .card-overlay {
-            position: absolute;
-            bottom: 0; width: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
-            padding: 15px 12px 12px 12px;
-        }
-        .card-title { font-size: 15px; font-weight: bold; margin-bottom: 4px; color: #fff; }
-        .card-info { font-size: 11px; color: var(--accent); font-weight: 600; display: flex; justify-content: space-between; }
-        
-        .card-badge {
-            position: absolute; top: 10px; left: 10px;
-            background-color: rgba(11, 12, 16, 0.8);
-            padding: 3px 6px; border-radius: 4px;
-            font-size: 10px; font-weight: bold; color: var(--accent);
-            backdrop-filter: blur(4px);
-        }
-
-        .fav-btn {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(0,0,0,0.5); border: none; color: #fff;
-            width: 28px; height: 28px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 12px;
-        }
-        .fav-btn:hover { color: #ff0055; }
-
-        /* --- MODALE (OKNA) --- */
+        /* --- PLAYER & ODCINKI (STYL JAK NA SCREENIE) --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-            display: none; justify-content: center; align-items: center; z-index: 2000;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            display: none; z-index: 2000;
+            grid-template-columns: 320px 1fr;
         }
-        .modal-content {
-            background-color: var(--bg-sec); padding: 30px; border-radius: 12px;
-            width: 90%; max-width: 550px; border: 1px solid rgba(255,255,255,0.1);
-            position: relative; max-height: 85vh; overflow-y: auto;
+
+        .episodes-sidebar {
+            background-color: var(--bg-sec);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
-        .modal-title { font-size: 22px; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; }
 
-        .dev-action-btn {
-            display: block; width: 100%; padding: 10px; background-color: rgba(255,255,255,0.05);
-            color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
-            margin-bottom: 10px; cursor: pointer; font-weight: bold; text-align: left;
+        .sidebar-header {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .dev-action-btn:hover { background-color: rgba(255,255,255,0.1); border-color: var(--accent); }
-        .dev-action-btn.danger { border-color: var(--admin-color); color: var(--admin-color); }
-        .dev-action-btn.danger:hover { background-color: var(--admin-color); color: #fff; }
 
-        /* --- TOAST POWIADOMIENIA --- */
-        #toast {
-            position: fixed; bottom: 20px; right: 20px;
-            background: var(--bg-sec); color: var(--text-main);
-            padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--accent);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 9999;
-            transform: translateY(100px); opacity: 0; transition: 0.3s;
+        .episodes-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 10px;
         }
-        #toast.show { transform: translateY(0); opacity: 1; }
 
-        /* --- PLAYER MOCKUP --- */
-        #player-modal .modal-content { max-width: 800px; padding: 0; background: #000; overflow: hidden; }
-        .video-box { width: 100%; height: 400px; background: #111; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #555; position: relative; }
-        .video-controls { padding: 20px; background: var(--bg-sec); display: flex; justify-content: space-between; align-items: center; }
+        .episode-item {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            background: var(--bg-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+        }
+        .episode-item:hover { border-color: rgba(255,255,255,0.1); }
+        .episode-item.active { background: var(--bg-panel); border-color: var(--accent); }
+        
+        .ep-num { font-weight: bold; font-size: 13px; color: var(--accent); min-width: 20px; }
+        .ep-title { font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .flags { font-size: 10px; }
 
-        footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
+        .player-main-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        .player-top-bar {
+            padding: 15px 25px;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ad-warning {
+            background: #d97706;
+            color: #000;
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .video-container {
+            flex: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .video-container iframe, .video-container video {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-placeholder {
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .player-bottom-bar {
+            padding: 15px 25px;
+            background: var(--bg-sec);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* --- MODAL ADMINA I INFO --- */
+        .generic-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000;
+        }
+        .generic-content {
+            background: var(--bg-sec); padding: 30px; border-radius: 10px; width: 450px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 8px 12px; background: var(--bg-main); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 4px; }
+
+        .close-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -279,266 +254,266 @@
     <!-- NAVBAR -->
     <nav>
         <a href="#" class="logo">Basokuda<span>Player</span> ⚡</a>
-        <ul class="nav-links">
-            <li><a href="#" onclick="showToast('Przeglądasz stronę główną')">Główna</a></li>
-            <li><a href="#" onclick="randomAnime()">🎲 Losuj Anime</a></li>
-            <li><a href="#" onclick="showToast('Ulubione zapisane lokalnie')">Ulubione ❤️</a></li>
-            <li><a href="https://discord.com" target="_blank">Discord</a></li>
-        </ul>
         <div class="nav-right">
-            <input type="text" id="searchInput" class="search-bar" placeholder="Szukaj tytulu..." onkeyup="filterCards()">
-            <button class="nav-icon-btn" onclick="toggleTheme()" title="Zmień motyw">🌓</button>
-            <button id="dev-tools-btn" class="btn-dev" onclick="openModal('dev-modal')">Dev 🛠️</button>
-            <button id="logout-btn" class="btn-logout" onclick="logout()">Wyloguj</button>
-            <a href="https://discord.com/oauth2/authorize?client_id=1548255647311601734&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" id="login-btn" class="btn-login">Discord Login</a>
+            <input type="text" class="search-bar" placeholder="Szukaj anime..." id="searchBox" oninput="filterAnime()">
+            <button class="btn btn-secondary" onclick="openAdminModal()">🛠️ Panel Dev / Dodaj Player</button>
+            <a href="https://discord.com/oauth2/authorize?client_id=1548255647311601734&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" class="btn btn-primary" id="loginBtn">Discord Login</a>
         </div>
     </nav>
 
-    <!-- HERO BANNER -->
+    <!-- HERO -->
     <div class="hero">
         <div class="hero-content">
-            <span class="hero-tag">Hit Sezonu • Najwyższa Jakość</span>
-            <h1 class="hero-title">Mushoku Tensei:<br>Jobless Reincarnation</h1>
-            <p class="hero-desc">Rozpocznij niesamowitą podróż przez świat magii, potworów i niezapomnianych przygód z Rudeusem Greyratem.</p>
-            <div class="hero-btns">
-                <button class="btn-main" onclick="openPlayer('Mushoku Tensei')">▶ Oglądaj Odcinek 1</button>
-                <button class="btn-secondary" onclick="showToast('Dodano do Twojej listy!')">+ Dodaj do listy</button>
+            <span style="background:var(--accent); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold;">HIT SEZONU</span>
+            <h1 class="hero-title" id="heroTitle">Mushoku Tensei III</h1>
+            <p class="hero-desc" id="heroDesc">Kolejna rola i niesamowite przygody w świecie fantasy. Sprawdź najnowsze odcinki w najwyższej jakości z pełnym wsparciem lektora i napisów.</p>
+            <button class="btn btn-primary" onclick="openPlayerModal(0)">▶ Oglądaj teraz</button>
+        </div>
+    </div>
+
+    <!-- KATALOG -->
+    <div class="container">
+        <h2 class="section-title">Katalog Serii Anime</h2>
+        <div class="grid" id="animeGrid">
+            <!-- Wypełniane dynamicznie przez JS -->
+        </div>
+    </div>
+
+    <!-- PLAYER & ODCINKI MODAL -->
+    <div id="playerModal" class="modal-overlay">
+        <!-- Sidebar z odcinkami -->
+        <div class="episodes-sidebar">
+            <div class="sidebar-header">
+                <span id="sidebarAnimeTitle">Tytuł Anime</span>
+                <button class="close-btn" onclick="closePlayerModal()">×</button>
+            </div>
+            <div style="padding: 10px; font-size: 11px; color: var(--text-muted);" id="animeMetaInfo">
+                Produkcja: 2024–2026 • Status: Kontynuowane
+            </div>
+            <div class="episodes-list" id="episodesList">
+                <!-- Odcinki -->
+            </div>
+        </div>
+
+        <!-- Główny obszar odtwarzacza -->
+        <div class="player-main-area">
+            <div class="ad-warning">
+                ⚠️ Ten odcinek zawiera reklamy. Niestety nie mamy wpływu na reklamy w tym playerze, nasz własny player nie obsługuje tego źródła :(
+            </div>
+            <div class="player-top-bar">
+                <span id="currentEpTitle" style="font-weight: bold; font-size: 14px;">Wybierz odcinek z listy</span>
+                <button class="close-btn" onclick="closePlayerModal()">×</button>
+            </div>
+            <div class="video-container" id="videoContainer">
+                <div class="video-placeholder">Wybierz odcinek po lewej stronie, aby rozpocząć odtwarzanie.</div>
+            </div>
+            <div class="player-bottom-bar">
+                <button class="btn btn-secondary">🔁 Zmień player</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary">✔️ Oznacz jako obejrzane</button>
+                    <button class="btn btn-primary">Następny odcinek ➔</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- KATEGORIE -->
-    <div class="categories-bar">
-        <div class="cat-chip active" onclick="filterCat('all')">Wszystkie</div>
-        <div class="cat-chip" onclick="filterCat('isekai')">Isekai</div>
-        <div class="cat-chip" onclick="filterCat('akcja')">Akcja</div>
-        <div class="cat-chip" onclick="filterCat('romans')">Romans</div>
-        <div class="cat-chip" onclick="filterCat('scifi')">Sci-Fi / Cyberpunk</div>
-        <div class="cat-chip" onclick="filterCat('klasyka')">Klasyka</div>
-    </div>
-
-    <!-- SIATKA ANIME -->
-    <div class="section-container">
-        <div class="section-header">
-            <h2 class="section-title">Katalog Serii i Filmów</h2>
-            <span style="color: var(--text-muted); font-size: 13px;" id="count-info">12 pozycji</span>
-        </div>
-        <div class="card-grid" id="anime-grid">
-            <!-- Karta 1 -->
-            <div class="card" data-category="klasyka" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Hunter x Hunter')">
-                <span class="card-badge">⭐ 9.4 / HD</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Hunter x Hunter</div><div class="card-info"><span>Odc. 148</span><span>Napisy PL</span></div></div>
+    <!-- ADMIN MODAL: DODAWANIE PLAYERA / ANIME -->
+    <div id="adminModal" class="generic-modal">
+        <div class="generic-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="font-size:16px; color:var(--accent);">🛠️ Narzędzia Dev: Dodaj Player / Odcinek</h3>
+                <button class="close-btn" onclick="closeAdminModal()">×</button>
             </div>
-            <!-- Karta 2 -->
-            <div class="card" data-category="romans" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Alya Sometimes Hides')">
-                <span class="card-badge">🔥 NOWOŚĆ</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Alya Hides Feelings</div><div class="card-info"><span>Odc. 12</span><span>Lektor PL</span></div></div>
+            <div class="form-group">
+                <label>Wybierz Anime</label>
+                <select id="adminAnimeSelect" class="form-control">
+                    <!-- Opcje anime -->
+                </select>
             </div>
-            <!-- Karta 3 -->
-            <div class="card" data-category="scifi" style="background-image: url('https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Cyberpunk Edgerunners')">
-                <span class="card-badge">⚡ KULTOWE</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Cyberpunk Edgerunners</div><div class="card-info"><span>Cały sezon</span><span>Dubbing</span></div></div>
+            <div class="form-group">
+                <label>Numer Odcinka</label>
+                <input type="number" id="adminEpNum" class="form-control" placeholder="np. 12">
             </div>
-            <!-- Karta 4 -->
-            <div class="card" data-category="akcja" style="background-image: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Jujutsu Kaisen')">
-                <span class="card-badge">⭐ TOP 1</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Jujutsu Kaisen</div><div class="card-info"><span>Odc. 47</span><span>Napisy PL</span></div></div>
+            <div class="form-group">
+                <label>Tytuł Odcinka</label>
+                <input type="text" id="adminEpTitle" class="form-control" placeholder="np. Nowa przygoda">
             </div>
-            <!-- Karta 5 -->
-            <div class="card" data-category="isekai" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Sword Art Online')">
-                <span class="card-badge">ZAKOŃCZONE</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Sword Art Online</div><div class="card-info"><span>Wszystkie Sezony</span><span>HD</span></div></div>
+            <div class="form-group">
+                <label>Adres URL wideo (Embed / Link do playera)</label>
+                <input type="text" id="adminEpUrl" class="form-control" placeholder="https://www.youtube.com/embed/... lub link cda">
             </div>
-            <!-- Karta 6 -->
-            <div class="card" data-category="akcja" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Attack on Titan')">
-                <span class="card-badge">LEGENDARNE</span>
-                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
-                <div class="card-overlay"><div class="card-title">Attack on Titan</div><div class="card-info"><span>Finał Serii</span><span>Napisy PL</span></div></div>
-            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="addNewEpisode()">Zapisz i Dodaj do Bazy</button>
         </div>
     </div>
-
-    <!-- MODAL: DEV TOOLS -->
-    <div id="dev-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('dev-modal')">×</button>
-            <h2 class="modal-title">🛠️ Panel Administratora</h2>
-            <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 13px;">Zarządzanie platformą BasokudaPlayer dla uprzywilejowanego konta.</p>
-            
-            <button class="dev-action-btn" onclick="showToast('Funkcja dodawania w budowie')">➕ Dodaj Nowy Odcinek do bazy</button>
-            <button class="dev-action-btn" onclick="alert('System działa poprawnie. Status: Online (Ping: 14ms)')">📊 Sprawdź statystyki serwera</button>
-            <button class="dev-action-btn" onclick="showToast('Konfiguracja odtwarzacza zapisana')">⚙️ Optymalizuj buforowanie wideo</button>
-            <button class="dev-action-btn danger" onclick="clearLocalStorageData()">🗑️ Wyczyść pamięć i zresetuj sesję</button>
-        </div>
-    </div>
-
-    <!-- MODAL: PLAYER -->
-    <div id="player-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('player-modal')">×</button>
-            <div class="video-box" id="player-screen">▶ [ Odtwarzacza Wideo ]</div>
-            <div class="video-controls">
-                <h3 id="current-title" style="font-size: 16px;">Odtwarzanie...</h3>
-                <button class="btn-login" onclick="closeModal('player-modal')">Zamknij Odtwarzacz</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- POWIADOMIENIE TOAST -->
-    <div id="toast">Komunikat systemu...</div>
-
-    <footer>
-        <p>BasokudaPlayer &copy; 2026. Stworzone z pasją do anime i programowania. Wszystkie prawa zastrzeżone.</p>
-    </footer>
 
     <!-- SKRYPTY LOGIKI -->
     <script>
-        const ADMIN_EMAIL = "dogdeyy@gmail.com";
-
-        // 1. Toast powiadomienia
-        function showToast(text) {
-            const toast = document.getElementById("toast");
-            toast.textContent = text;
-            toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
-        }
-
-        // 2. Modale
-        function openModal(id) { document.getElementById(id).style.display = "flex"; }
-        function closeModal(id) { document.getElementById(id).style.display = "none"; }
-
-        // 3. Odtwarzacz
-        function openPlayer(title) {
-            document.getElementById("current-title").textContent = `Oglądasz: ${title}`;
-            openModal('player-modal');
-            showToast(`Ładowanie strumienia: ${title}`);
-        }
-
-        // 4. Motyw jasny/ciemny
-        function toggleTheme() {
-            if (document.documentElement.getAttribute("data-theme") === "light") {
-                document.documentElement.removeAttribute("data-theme");
-                showToast("Przełączono na tryb ciemny");
-            } else {
-                document.documentElement.setAttribute("data-theme", "light");
-                showToast("Przełączono na tryb jasny");
+        // Baza danych anime z oryginalnymi plakatami i informacjami
+        let animeDatabase = JSON.parse(localStorage.getItem("basokuda_db")) || [
+            {
+                id: 0,
+                title: "Mushoku Tensei: Jobless Reincarnation",
+                poster: "https://m.media-amazon.com/images/M/MV5BNmU5YzljNjYtODU5NC00ZGE2LWEzODQtMjUxZjE3MGNhNmY1XkEyXkFqcGdeQXVyMTAyOTE2ODg0._V1_FMjpg_UX1000_.jpg",
+                year: "2023 - Obecnie",
+                status: "Kontynuowane (Trwają prace nad kolejnymi sezonami)",
+                studio: "Studio Bind",
+                episodes: [
+                    { num: 1, title: "Płoń jasno, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧" },
+                    { num: 2, title: "Szekaj, wściekły psie!", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵" },
+                    { num: 3, title: "Życie w domu", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇬🇧" }
+                ]
+            },
+            {
+                id: 1,
+                title: "Hunter x Hunter",
+                poster: "https://m.media-amazon.com/images/M/MV5BNGM0MWNhMDctYTcxMi00MDVmLWI1OWUtNzk1MDI3MmJkYzYzXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg",
+                year: "2011 - 2014",
+                status: "Zakończone (Brak oficjalnych zapowiedzi kontynuacji)",
+                studio: "Madhouse",
+                episodes: [
+                    { num: 1, title: "Departure x and x Friends", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵" },
+                    { num: 2, title: "Test x of x Tests", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Jujutsu Kaisen",
+                poster: "https://m.media-amazon.com/images/M/MV5BN2E1MWI3OWMtNGM2Yi00YjVjLWIyMmItZWZjNmY3MWI1ZjExXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg",
+                year: "2020 - Obecnie",
+                status: "Kontynuowane (Zapowiedziano kolejny arc)",
+                studio: "MAPPA",
+                episodes: [
+                    { num: 1, title: "Ryujin / Początek", url: "https://www.youtube.com/embed/dQw4w9WgXcQ", flags: "🇵🇱 🇯🇵 🇬🇧" }
+                ]
             }
-        }
+        ];
 
-        // 5. Wyszukiwarka w czasie rzeczywistym
-        function filterCards() {
-            let query = document.getElementById("searchInput").value.toLowerCase();
-            let cards = document.querySelectorAll(".card");
-            cards.forEach(card => {
-                let title = card.querySelector(".card-title").textContent.toLowerCase();
-                card.style.display = title.includes(query) ? "block" : "none";
+        let currentAnimeIndex = 0;
+
+        function renderGrid() {
+            const grid = document.getElementById("animeGrid");
+            grid.innerHTML = "";
+            animeDatabase.forEach((anime, index) => {
+                grid.innerHTML += `
+                    <div class="anime-card" onclick="openPlayerModal(${index})">
+                        <div class="anime-poster" style="background-image: url('${anime.poster}')">
+                            <span class="anime-badge">HD</span>
+                        </div>
+                        <div class="anime-info">
+                            <div class="anime-name">${anime.title}</div>
+                            <div class="anime-details">${anime.year} • ${anime.episodes.length} odc.</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Wypełnij select w panelu admina
+            const select = document.getElementById("adminAnimeSelect");
+            select.innerHTML = "";
+            animeDatabase.forEach((anime, index) => {
+                select.innerHTML += `<option value="${index}">${anime.title}</option>`;
             });
         }
 
-        // 6. Filtrowanie kategorii
-        function filterCat(cat) {
-            document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
-            event.target.classList.add("active");
-            let cards = document.querySelectorAll(".card");
-            cards.forEach(card => {
-                if (cat === 'all' || card.dataset.category === cat) {
-                    card.style.display = "block";
+        function openPlayerModal(animeIndex) {
+            currentAnimeIndex = animeIndex;
+            const anime = animeDatabase[animeIndex];
+            
+            document.getElementById("sidebarAnimeTitle").textContent = anime.title;
+            document.getElementById("animeMetaInfo`).innerHTML = `Produkcja: ${anime.year}<br>Status: ${anime.status}<br>Studio: ${anime.studio}`;
+            
+            renderEpisodesList();
+            document.getElementById("playerModal").style.display = "grid";
+            
+            // Włącz pierwszy odcinek domyślnie, jeśli istnieje
+            if(anime.episodes.length > 0) {
+                playEpisode(0);
+            }
+        }
+
+        function renderEpisodesList() {
+            const anime = animeDatabase[currentAnimeIndex];
+            const list = document.getElementById("episodesList");
+            list.innerHTML = "";
+            
+            anime.episodes.forEach((ep, i) => {
+                list.innerHTML += `
+                    <div class="episode-item" onclick="playEpisode(${i})" id="ep-row-${i}">
+                        <span class="ep-num">${ep.num}</span>
+                        <span class="ep-title">${ep.title}</span>
+                        <span class="flags">${ep.flags}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function playEpisode(epIndex) {
+            const anime = animeDatabase[currentAnimeIndex];
+            const ep = anime.episodes[epIndex];
+            
+            // Podświetl aktywny
+            document.querySelectorAll(".episode-item").forEach(el => el.classList.remove("active"));
+            const activeRow = document.getElementById(`ep-row-${epIndex}`);
+            if(activeRow) activeRow.classList.add("active");
+
+            document.getElementById("currentEpTitle").textContent = `Odcinek ${ep.num}: ${ep.title}`;
+            
+            // Wstaw player wideo
+            const container = document.getElementById("videoContainer");
+            container.innerHTML = `<iframe src="${ep.url}" allowfullscreen></iframe>`;
+        }
+
+        function closePlayerModal() {
+            document.getElementById("playerModal").style.display = "none";
+            document.getElementById("videoContainer").innerHTML = '<div class="video-placeholder">Zatrzymano odtwarzanie.</div>';
+        }
+
+        function openAdminModal() {
+            document.getElementById("adminModal").style.display = "flex";
+        }
+        function closeAdminModal() {
+            document.getElementById("adminModal").style.display = "none";
+        }
+
+        function addNewEpisode() {
+            const animeIdx = document.getElementById("adminAnimeSelect").value;
+            const num = document.getElementById("adminEpNum").value;
+            const title = document.getElementById("adminEpTitle").value;
+            const url = document.getElementById("adminEpUrl").value;
+
+            if(!num || !title || !url) {
+                alert("Wypełnij wszystkie pola formularza!");
+                return;
+            }
+
+            animeDatabase[animeIdx].episodes.push({
+                num: parseInt(num),
+                title: title,
+                url: url,
+                flags: "🇵🇱 🇯🇵"
+            });
+
+            localStorage.setItem("basokuda_db", JSON.stringify(animeDatabase));
+            alert("Pomyślnie dodano nowy player / odcinek do bazy!");
+            closeAdminModal();
+            renderGrid();
+        }
+
+        function filterAnime() {
+            let query = document.getElementById("searchBox").value.toLowerCase();
+            let cards = document.querySelectorAll(".anime-card");
+            animeDatabase.forEach((anime, idx) => {
+                if(anime.title.toLowerCase().includes(query)) {
+                    cards[idx].style.display = "block";
                 } else {
-                    card.style.display = "none";
+                    cards[idx].style.display = "none";
                 }
             });
         }
 
-        // 7. Losowanie anime
-        function randomAnime() {
-            let cards = document.querySelectorAll(".card");
-            let randomCard = cards[Math.floor(Math.random() * cards.length)];
-            let title = randomCard.querySelector(".card-title").textContent;
-            showToast(`Wylosowano dla Ciebie: ${title}`);
-            openPlayer(title);
-        }
-
-        // 8. Ulubione serduszko
-        function toggleFav(btn) {
-            btn.style.color = btn.style.color === "rgb(255, 0, 85)" ? "#fff" : "#ff0055";
-            showToast("Zaktualizowano listę ulubionych!");
-        }
-
-        // 9. Autoryzacja Discord i obsługa konta
-        function handleDiscordAuth() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const token = params.get("access_token");
-
-            if (token) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-                fetch("https://discord.com/api/users/@me", {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                .then(res => res.json())
-                .then(user => {
-                    if (user.id) {
-                        const loggedUser = {
-                            name: user.global_name || user.username,
-                            email: user.email || `${user.username}@discord.user`
-                        };
-                        localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
-                        updateUI(loggedUser);
-                        showToast(`Zitaj ponownie, ${loggedUser.name}!`);
-                    }
-                });
-            }
-        }
-
-        function updateUI(user) {
-            const loginBtn = document.getElementById("login-btn");
-            const devBtn = document.getElementById("dev-tools-btn");
-            const logoutBtn = document.getElementById("logout-btn");
-
-            if (user) {
-                loginBtn.textContent = `👤 ${user.name}`;
-                loginBtn.href = "#";
-                loginBtn.style.pointerEvents = "none";
-                logoutBtn.style.display = "inline-block";
-
-                if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-                    devBtn.style.display = "inline-block";
-                }
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem("loggedUser");
-            window.location.reload();
-        }
-
-        function clearLocalStorageData() {
-            localStorage.clear();
-            alert("Pamięć podręczna wyczyszczona.");
-            window.location.reload();
-        }
-
-        // Inicjalizacja przy starcie
+        // Start
         document.addEventListener("DOMContentLoaded", () => {
-            if (window.location.hash.includes("access_token")) {
-                handleDiscordAuth();
-            } else {
-                const savedUser = localStorage.getItem("loggedUser");
-                if (savedUser) updateUI(JSON.parse(savedUser));
-            }
-        });
-
-        // Zamknięcie okienek pod ESC
-        window.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") {
-                closeModal('dev-modal');
-                closeModal('player-modal');
-            }
+            renderGrid();
         });
     </script>
 </body>
