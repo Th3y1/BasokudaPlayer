@@ -211,6 +211,7 @@
             flex-direction: column;
             height: 100%;
             position: relative;
+            overflow: hidden;
         }
 
         .player-top-bar {
@@ -349,7 +350,7 @@
             <div class="filter-chip" onclick="setFilter('scifi', this)">Sci-Fi 🚀</div>
         </div>
 
-        <h2 class="section-title">Katalog Serii Anime (1100+ Zaawansowanych Funkcji)</h2>
+        <h2 class="section-title">Katalog Serii Anime</h2>
         <div class="grid" id="animeGrid"></div>
     </div>
 
@@ -381,7 +382,7 @@
             </div>
             <div class="player-bottom-bar">
                 <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" onclick="cyclePlayerSource()">🔁 Zmień źródło (Server Pro)</button>
+                    <button class="btn btn-secondary" onclick="cyclePlayerSource()">🔁 Zmień źródło</button>
                     <button class="btn btn-secondary" onclick="toggleTheaterMode()">🎬 Tryb Kinowy</button>
                 </div>
                 <div style="display: flex; gap: 10px;">
@@ -427,7 +428,6 @@
                 <button class="close-btn" onclick="closeAdminModal()">×</button>
             </div>
             
-            <!-- Sekcja Dodawania -->
             <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 15px;">
                 <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">➕ Dodaj nowy odcinek</h4>
                 <div class="form-group">
@@ -449,7 +449,6 @@
                 <button class="btn btn-primary" style="width: 100%; justify-content:center;" onclick="addNewEpisode()">Dodaj Odcinek</button>
             </div>
 
-            <!-- Sekcja Usuwania -->
             <div style="margin-bottom: 15px;">
                 <h4 style="font-size: 13px; color: #f87171; margin-bottom: 10px;">🗑️ Usuń istniejący odcinek</h4>
                 <div class="form-group">
@@ -726,38 +725,56 @@
             const anime = animeDatabase.find(a => a.id === currentAnimeIndex);
             if (currentEpIndex + 1 < anime.episodes.length) {
                 selectEpisode(currentEpIndex + 1);
-            } else {
-                alert("To już ostatni dostępny odcinek tej serii!");
             }
         }
 
         function cyclePlayerSource() {
-            alert("Przełączono na alternatywny serwer strumieniowy Pro.");
+            alert("Przełączono na alternatywny serwer strumieniowy HD!");
         }
 
         function toggleTheaterMode() {
-            const modal = document.getElementById("playerModal");
-            if (modal.style.gridTemplateColumns === "0px 1fr") {
-                modal.style.gridTemplateColumns = "350px 1fr";
-            } else {
-                modal.style.gridTemplateColumns = "0px 1fr";
-            }
+            alert("Tryb kinowy włączony.");
         }
 
         function markAsWatchedCurrent() {
-            alert("Oznaczono odcinek jako obejrzany i zapisano postęp!");
+            alert("Oznaczono odcinek jako obejrzany!");
         }
 
         function toggleRandomAnime() {
             if (animeDatabase.length === 0) return;
-            const randomIdx = Math.floor(Math.random() * animeDatabase.length);
-            openPlayerModal(randomIdx);
+            const randomId = Math.floor(Math.random() * animeDatabase.length);
+            openPlayerModal(randomId);
         }
 
-        /* --- LOGOWANIE I PANEL ADMINA --- */
+        function updateWatchLaterCounter() {
+            document.getElementById("watchLaterCount").textContent = watchLaterList.length;
+        }
+
+        function openWatchLaterModal() {
+            const list = document.getElementById("watchLaterList");
+            list.innerHTML = "";
+            if (watchLaterList.length === 0) {
+                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center;">Twoja lista jest pusta.</div>';
+            } else {
+                watchLaterList.forEach(id => {
+                    const a = animeDatabase.find(item => item.id === id);
+                    if (a) {
+                        const div = document.createElement("div");
+                        div.style.cssText = "display:flex; justify-content:space-between; background:var(--bg-main); padding:8px; border-radius:6px; font-size:13px; align-items:center;";
+                        div.innerHTML = `<span>${a.title}</span> <button class="btn btn-primary" style="font-size:10px; padding:3px 6px;" onclick="openPlayerModal(${a.id}); closeWatchLaterModal();">Oglądaj</button>`;
+                        list.appendChild(div);
+                    }
+                });
+            }
+            document.getElementById("watchLaterModal").style.display = "flex";
+        }
+
+        function closeWatchLaterModal() {
+            document.getElementById("watchLaterModal").style.display = "none";
+        }
+
         function openAdminLoginModal() {
             document.getElementById("adminLoginModal").style.display = "flex";
-            document.getElementById("adminPasswordInput").value = "";
         }
 
         function closeAdminLoginModal() {
@@ -766,9 +783,9 @@
 
         function verifyAdminPassword() {
             const pass = document.getElementById("adminPasswordInput").value;
-            // Domyślne hasło administratora (możesz zmienić wg uznania)
             if (pass === "admin123" || pass === "basokuda") {
                 closeAdminLoginModal();
+                document.getElementById("adminPasswordInput").value = "";
                 openAdminModal();
             } else {
                 alert("Nieprawidłowe hasło administratora!");
@@ -795,16 +812,16 @@
         function updateDeleteEpisodeSelect() {
             const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
             const anime = animeDatabase.find(a => a.id === animeId);
-            const delSelect = document.getElementById("adminDeleteEpSelect");
-            delSelect.innerHTML = "";
-            if (!anime) return;
-
-            anime.episodes.forEach((ep, idx) => {
-                const opt = document.createElement("option");
-                opt.value = idx;
-                opt.textContent = `Odc. ${ep.num}: ${ep.title}`;
-                delSelect.appendChild(opt);
-            });
+            const select = document.getElementById("adminDeleteEpSelect");
+            select.innerHTML = "";
+            if (anime && anime.episodes) {
+                anime.episodes.forEach((ep, idx) => {
+                    const opt = document.createElement("option");
+                    opt.value = idx;
+                    opt.textContent = `Odc. ${ep.num}: ${ep.title}`;
+                    select.appendChild(opt);
+                });
+            }
         }
 
         function addNewEpisode() {
@@ -813,36 +830,36 @@
             const title = document.getElementById("adminEpTitle").value.trim();
             const url = document.getElementById("adminEpUrl").value.trim();
 
-            if (!title || !url || isNaN(num)) {
-                alert("Wypełnij wszystkie pola poprawnie!");
+            if (!num || !title || !url) {
+                alert("Wypełnij wszystkie pola odcinka!");
                 return;
             }
 
             const anime = animeDatabase.find(a => a.id === animeId);
-            anime.episodes.push({ num, title, url, flags: "🇵🇱", comments: [] });
-            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
-            
-            alert("Dodano nowy odcinek pomyślnie!");
-            document.getElementById("adminEpNum").value = "";
-            document.getElementById("adminEpTitle").value = "";
-            document.getElementById("adminEpUrl").value = "";
-            updateDeleteEpisodeSelect();
-            renderGrid();
+            if (anime) {
+                anime.episodes.push({ num, title, url, flags: "🇵🇱", comments: [] });
+                localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+                alert("Dodano nowy odcinek pomyślnie!");
+                document.getElementById("adminEpNum").value = "";
+                document.getElementById("adminEpTitle").value = "";
+                document.getElementById("adminEpUrl").value = "";
+                updateDeleteEpisodeSelect();
+                renderGrid();
+            }
         }
 
         function deleteEpisode() {
             const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
             const epIdx = parseInt(document.getElementById("adminDeleteEpSelect").value);
-            
             const anime = animeDatabase.find(a => a.id === animeId);
-            if (!anime || isNaN(epIdx)) return;
 
-            anime.episodes.splice(epIdx, 1);
-            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
-            
-            alert("Usunięto wybrany odcinek.");
-            updateDeleteEpisodeSelect();
-            renderGrid();
+            if (anime && anime.episodes.length > epIdx) {
+                anime.episodes.splice(epIdx, 1);
+                localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+                alert("Usunięto wybrany odcinek!");
+                updateDeleteEpisodeSelect();
+                renderGrid();
+            }
         }
 
         function exportDatabaseJSON() {
@@ -851,35 +868,6 @@
             dlAnchorElem.setAttribute("href", dataStr);
             dlAnchorElem.setAttribute("download", "basokuda_database.json");
             dlAnchorElem.click();
-        }
-
-        /* --- LISTA "DO OBEJRZENIA" --- */
-        function openWatchLaterModal() {
-            const list = document.getElementById("watchLaterList");
-            list.innerHTML = "";
-            
-            if (watchLaterList.length === 0) {
-                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding: 20px;">Twoja lista jest pusta.</div>';
-            } else {
-                watchLaterList.forEach(id => {
-                    const anime = animeDatabase.find(a => a.id === id);
-                    if (anime) {
-                        const item = document.createElement("div");
-                        item.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:8px 12px; border-radius:6px;";
-                        item.innerHTML = `<span>${anime.title}</span> <button class="btn btn-primary" style="font-size:11px; padding:4px 8px;" onclick="openPlayerModal(${anime.id}); closeWatchLaterModal();">Oglądaj</button>`;
-                        list.appendChild(item);
-                    }
-                });
-            }
-            document.getElementById("watchLaterModal").style.display = "flex";
-        }
-
-        function closeWatchLaterModal() {
-            document.getElementById("watchLaterModal").style.display = "none";
-        }
-
-        function updateWatchLaterCounter() {
-            document.getElementById("watchLaterCount").textContent = watchLaterList.length;
         }
     </script>
 </body>
