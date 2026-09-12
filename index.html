@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasokudaPlayer - Odtwarzacz Anime</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1f2833;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #a855f7;
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* Sekcja Wideo */
+        .player-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* Proporcje 16:9 */
+            height: 0;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #1f2833;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+
+        .player-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Informacje o serii */
+        .anime-info {
+            background: #1f2833;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #27272a;
+        }
+
+        .anime-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .anime-desc {
+            font-size: 0.95rem;
+            color: #c5c6c7;
+            line-height: 1.5;
+        }
+
+        /* Lista Odcinków */
+        .playlist {
+            background: #1f2833;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #27272a;
+        }
+
+        .playlist h2 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #fff;
+            border-left: 4px solid #a855f7;
+            padding-left: 10px;
+        }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px;
+        }
+
+        .episode-btn {
+            background: #0b0c10;
+            color: #fff;
+            border: 1px solid #45a29e;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+        }
+
+        .episode-btn:hover {
+            background: #a855f7;
+            border-color: #a855f7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+        }
+
+        .episode-btn.active {
+            background: #a855f7;
+            border-color: #a855f7;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 30px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">⚡ BasokudaPlayer</div>
+    </header>
+
+    <div class="main-container">
+        <!-- Odtwarzacz Wideo -->
+        <div class="player-wrapper">
+            <!-- Domyślnie ustawiony Odcinek 1 -->
+            <iframe id="video-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        </div>
+
+        <!-- Informacje o anime -->
+        <div class="anime-info">
+            <h1 class="anime-title" id="current-title">Isekai Yakkyoku – Odcinek 1</h1>
+            <p class="anime-desc">Młody farmaceuta reinkarnuje się w innym świecie z nieskończonymi zasobami many i zdolnością tworzenia dowolnych substancji. Rozpoczyna nową przygodę, tworząc nowoczesną medycynę.</p>
+        </div>
+
+        <!-- Wybór Odcinków -->
+        <div class="playlist">
+            <h2>Lista Odcinków</h2>
+            <div class="episodes-grid">
+                <!-- TUTAJ PODMIENIASZ LINKI DO SWOICH ODCINKÓW -->
+                <button class="episode-btn active" onclick="changeVideo('https://www.youtube.com/embed/dQw4w9WgXcQ', 'Odcinek 1', this)">Odcinek 1</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_2', 'Odcinek 2', this)">Odcinek 2</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_3', 'Odcinek 3', this)">Odcinek 3</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_4', 'Odcinek 4', this)">Odcinek 4</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_5', 'Odcinek 5', this)">Odcinek 5</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_6', 'Odcinek 6', this)">Odcinek 6</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_7', 'Odcinek 7', this)">Odcinek 7</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_8', 'Odcinek 8', this)">Odcinek 8</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_9', 'Odcinek 9', this)">Odcinek 9</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_10', 'Odcinek 10', this)">Odcinek 10</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_11', 'Odcinek 11', this)">Odcinek 11</button>
+                <button class="episode-btn" onclick="changeVideo('LINK_DO_EMBED_ODCINKE_12', 'Odcinek 12', this)">Odcinek 12</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        BasokudaPlayer &copy; 2026 – Własny Odtwarzacz Anime
+    </footer>
+
+    <script>
+        function changeVideo(url, epTitle, btn) {
+            // Zmiana źródła wideo w iframe
+            document.getElementById('video-player').src = url;
+            
+            // Zmiana nagłówka
+            document.getElementById('current-title').innerText = "Isekai Yakkyoku – " + epTitle;
+
+            // Zmiana aktywnego przycisku
+            let buttons = document.querySelectorAll('.episode-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
