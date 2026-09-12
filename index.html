@@ -90,6 +90,8 @@
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-secondary { background-color: rgba(255,255,255,0.1); color: #fff; }
         .btn-secondary:hover { background-color: rgba(255,255,255,0.2); }
+        .btn-danger { background-color: #dc2626; color: #fff; }
+        .btn-danger:hover { background-color: #b91c1c; }
 
         /* --- HERO BANNER --- */
         .hero {
@@ -283,9 +285,9 @@
             background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 3000;
         }
         .generic-content {
-            background: var(--bg-sec); padding: 30px; border-radius: 10px; width: 450px;
+            background: var(--bg-sec); padding: 30px; border-radius: 10px; width: 480px;
             border: 1px solid rgba(255,255,255,0.1);
-            max-height: 80vh; overflow-y: auto;
+            max-height: 85vh; overflow-y: auto;
         }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
@@ -315,9 +317,8 @@
         <a href="#" class="logo">Basokuda<span>Player</span> ⚡</a>
         <div class="nav-right">
             <input type="text" class="search-bar" placeholder="Szukaj anime, studia, tagów..." id="searchBox" oninput="filterAnime()">
-            <button class="btn btn-secondary" onclick="openWatchLaterModal()">🔖 Lista do obejrzenia (<span id="watchLaterCount">0</span>)</button>
-            <button class="btn btn-secondary" onclick="openAdminModal()">🛠️ Panel Dev / Baza</button>
-            <button class="btn btn-primary" id="loginBtn" onclick="toggleLoginState()">🔒 Odblokuj Dev</button>
+            <button class="btn btn-secondary" onclick="openWatchLaterModal()">🔖 Lista (<span id="watchLaterCount">0</span>)</button>
+            <button class="btn btn-primary" onclick="openAdminModal()">🛠️ Panel Dev / Baza</button>
         </div>
     </nav>
 
@@ -403,46 +404,49 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL -->
+    <!-- ADMIN MODAL (DODawanie i USUWAtanie odcinków - bez logowania) -->
     <div id="adminModal" class="generic-modal">
         <div class="generic-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="font-size:16px; color:var(--accent);">🛠️ Panel Dev / Zaawansowane Zarządzanie</h3>
+                <h3 style="font-size:16px; color:var(--accent);">🛠️ Panel Dev / Baza Danych</h3>
                 <button class="close-btn" onclick="closeAdminModal()">×</button>
             </div>
-            <div class="form-group">
-                <label>Wybierz Serię Anime</label>
-                <select id="adminAnimeSelect" class="form-control"></select>
+            
+            <!-- Sekcja Dodawania -->
+            <div style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 15px;">
+                <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">➕ Dodaj nowy odcinek</h4>
+                <div class="form-group">
+                    <label>Wybierz Serię Anime</label>
+                    <select id="adminAnimeSelect" class="form-control" onchange="updateDeleteEpisodeSelect()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Numer Odcinka</label>
+                    <input type="number" id="adminEpNum" class="form-control" placeholder="np. 12">
+                </div>
+                <div class="form-group">
+                    <label>Tytuł Odcinka</label>
+                    <input type="text" id="adminEpTitle" class="form-control" placeholder="np. Ostateczne starcie">
+                </div>
+                <div class="form-group">
+                    <label>Adres URL wideo (Embed / Link)</label>
+                    <input type="text" id="adminEpUrl" class="form-control" placeholder="https://www.youtube.com/embed/...">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; justify-content:center;" onclick="addNewEpisode()">Dodaj Odcinek</button>
             </div>
-            <div class="form-group">
-                <label>Numer Odcinka</label>
-                <input type="number" id="adminEpNum" class="form-control" placeholder="np. 12">
+
+            <!-- Sekcja Usuwania -->
+            <div style="margin-bottom: 15px;">
+                <h4 style="font-size: 13px; color: #f87171; margin-bottom: 10px;">🗑️ Usuń istniejący odcinek</h4>
+                <div class="form-group">
+                    <label>Wybierz odcinek do usunięcia</label>
+                    <select id="adminDeleteEpSelect" class="form-control"></select>
+                </div>
+                <button class="btn btn-danger" style="width: 100%; justify-content:center;" onclick="deleteEpisode()">Usuń Wybrany Odcinek</button>
             </div>
-            <div class="form-group">
-                <label>Tytuł Odcinka</label>
-                <input type="text" id="adminEpTitle" class="form-control" placeholder="np. Ostateczne starcie">
-            </div>
-            <div class="form-group">
-                <label>Adres URL wideo (Embed / Link)</label>
-                <input type="text" id="adminEpUrl" class="form-control" placeholder="https://www.youtube.com/embed/...">
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn btn-primary" style="flex:1; justify-content:center;" onclick="addNewEpisode()">Dodaj Odcinek</button>
+
+            <div style="display: flex; gap: 10px;">
                 <button class="btn btn-secondary" style="flex:1; justify-content:center;" onclick="exportDatabaseJSON()">Eksport Bazy (JSON)</button>
             </div>
-        </div>
-    </div>
-
-    <!-- LOGIN / HASŁO DEV MODAL -->
-    <div id="loginModal" class="generic-modal" style="display:flex;">
-        <div class="generic-content" style="text-align: center;">
-            <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 10px;">🔐 Weryfikacja Dostępu Dev</h3>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Wpisz hasło dostępu do funkcji deweloperskich i bazy danych:</p>
-            <div class="form-group" style="text-align: left;">
-                <label>Hasło administratora / dewelopera:</label>
-                <input type="password" id="devPasswordInput" class="form-control" placeholder="Wpisz hasło..." onkeydown="if(event.key==='Enter') performLogin()">
-            </div>
-            <button class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="performLogin()">Potwierdź i Odblokuj</button>
         </div>
     </div>
 
@@ -480,52 +484,7 @@
             document.getElementById('devBlocker').style.display = 'flex';
         }
 
-        /* --- STAN SESJI I KONTROLA DOSTĘPU DEV --- */
-        let isDevAuthenticated = localStorage.getItem("basokuda_dev_auth") === "true";
-        const DEV_PASSWORD = "Korneliusz1111"; // Zaktualizowane hasło deweloperskie
-
-        function checkDevAccess() {
-            if (!isDevAuthenticated) {
-                alert("⛔ Brak uprawnień! Wymagane podanie hasła deweloperskiego.");
-                document.getElementById("loginModal").style.display = "flex";
-                return false;
-            }
-            return true;
-        }
-
-        function performLogin() {
-            const passVal = document.getElementById("devPasswordInput").value.trim();
-            if (passVal === DEV_PASSWORD) {
-                isDevAuthenticated = true;
-                localStorage.setItem("basokuda_dev_auth", "true");
-                document.getElementById("loginModal").style.display = "none";
-                document.getElementById("loginBtn").textContent = "🔓 Tryb Dev Aktywny";
-                alert("✅ Poprawne hasło! Masz teraz pełny dostęp do panelu dev.");
-            } else {
-                alert("❌ Błędne hasło deweloperskie!");
-            }
-        }
-
-        function toggleLoginState() {
-            if (isDevAuthenticated) {
-                if (confirm("Czy chcesz wylogować się z trybu deweloperskiego?")) {
-                    isDevAuthenticated = false;
-                    localStorage.removeItem("basokuda_dev_auth");
-                    document.getElementById("loginBtn").textContent = "🔒 Odblokuj Dev";
-                    alert("Wylogowano pomyślnie.");
-                }
-            } else {
-                document.getElementById("loginModal").style.display = "flex";
-            }
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
-            if (isDevAuthenticated) {
-                document.getElementById("loginModal").style.display = "none";
-                document.getElementById("loginBtn").textContent = "🔓 Tryb Dev Aktywny";
-            } else {
-                document.getElementById("loginModal").style.display = "flex";
-            }
             renderGrid();
         });
 
@@ -729,7 +688,7 @@
             if (!ep.comments) ep.comments = [];
 
             ep.comments.push({
-                author: isDevAuthenticated ? "Admin (Dev)" : "Widz",
+                author: "Widz (Dev)",
                 text: val
             });
 
@@ -743,7 +702,6 @@
         }
 
         function openAdminModal() {
-            if (!checkDevAccess()) return;
             const select = document.getElementById("adminAnimeSelect");
             select.innerHTML = "";
             animeDatabase.forEach(a => {
@@ -752,6 +710,7 @@
                 opt.textContent = a.title;
                 select.appendChild(opt);
             });
+            updateDeleteEpisodeSelect();
             document.getElementById("adminModal").style.display = "flex";
         }
 
@@ -759,8 +718,28 @@
             document.getElementById("adminModal").style.display = "none";
         }
 
+        function updateDeleteEpisodeSelect() {
+            const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
+            const anime = animeDatabase.find(a => a.id === animeId);
+            const deleteSelect = document.getElementById("adminDeleteEpSelect");
+            deleteSelect.innerHTML = "";
+
+            if (!anime || anime.episodes.length === 0) {
+                const opt = document.createElement("option");
+                opt.textContent = "Brak odcinków w tej serii";
+                deleteSelect.appendChild(opt);
+                return;
+            }
+
+            anime.episodes.forEach((ep, idx) => {
+                const opt = document.createElement("option");
+                opt.value = idx;
+                opt.textContent = `Odc. ${ep.num}: ${ep.title}`;
+                deleteSelect.appendChild(opt);
+            });
+        }
+
         function addNewEpisode() {
-            if (!checkDevAccess()) return;
             const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
             const num = parseInt(document.getElementById("adminEpNum").value);
             const title = document.getElementById("adminEpTitle").value.trim();
@@ -775,12 +754,31 @@
             anime.episodes.push({ num, title, url, flags: "🇵🇱 🇯🇵", comments: [] });
             localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
             alert("✅ Dodano pomyślnie nowy odcinek do bazy danych!");
-            closeAdminModal();
+            document.getElementById("adminEpTitle").value = "";
+            document.getElementById("adminEpUrl").value = "";
+            document.getElementById("adminEpNum").value = "";
+            updateDeleteEpisodeSelect();
+            renderGrid();
+        }
+
+        function deleteEpisode() {
+            const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
+            const epIdx = parseInt(document.getElementById("adminDeleteEpSelect").value);
+            const anime = animeDatabase.find(a => a.id === animeId);
+
+            if (!anime || isNaN(epIdx) || anime.episodes.length === 0) {
+                alert("Nie wybrano poprawnego odcinka do usunięcia!");
+                return;
+            }
+
+            const removed = anime.episodes.splice(epIdx, 1);
+            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+            alert(`🗑️ Usunięto odcinek: ${removed[0].title}`);
+            updateDeleteEpisodeSelect();
             renderGrid();
         }
 
         function exportDatabaseJSON() {
-            if (!checkDevAccess()) return;
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(animeDatabase, null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
