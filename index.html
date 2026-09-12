@@ -1,98 +1,295 @@
-// --- KONFIGURACJA ---
-const ADMIN_EMAIL = "dogdeyy@gmail.com";
-
-// --- ELEMENTY DOM ---
-const loginSection = document.getElementById("login-section"); // Twój kontener z przyciskami logowania
-const appContent = document.getElementById("app-content");     // Twój kontener z główną treścią strony
-const userStatus = document.getElementById("user-status");     // Napis np. "Zalogowano: Discord (nick)"
-const devBtn = document.getElementById("dev-tools-btn");         // Przycisk "Narzędzia Dev"
-
-// --- 1. OBSŁUGA POWROTU Z DISCORDA (OAuth2) ---
-function handleDiscordCallback() {
-    // Discord po zalogowaniu przysyła token w adresie URL po znaku '#'
-    const hash = window.location.hash.substring(1);
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get("access_token");
-
-    if (accessToken) {
-        // Czyścimy hash z adresu URL, żeby link wyglądał czysto
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        // Pobieramy dane użytkownika z API Discorda
-        fetch("https://discord.com/api/users/@me", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-        })
-        .then(res => res.json())
-        .then(userData => {
-            if (userData.id) {
-                // Zapisujemy sesję w pamięci przeglądarki
-                const sessionUser = {
-                    name: userData.global_name || userData.username,
-                    email: userData.email || `${userData.username}@discord.user`, // Jeśli zakres (scope) nie zawierał maila
-                    provider: "Discord",
-                    avatar: userData.avatar 
-                        ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` 
-                        : null
-                };
-                
-                localStorage.setItem("loggedUser", JSON.stringify(sessionUser));
-                initApp(sessionUser);
-            }
-        })
-        .catch(err => console.error("Błąd podczas pobierania profilu Discord:", err));
-    }
-}
-
-// --- 2. INICJALIZACJA WIDOKU STRONY ---
-function initApp(user) {
-    if (!user) {
-        // Nikt nie jest zalogowany -> pokaż formularz logowania
-        if (loginSection) loginSection.style.display = "block";
-        if (appContent) appContent.style.display = "none";
-        return;
-    }
-
-    // Użytkownik jest zalogowany -> pokaż treść strony
-    if (loginSection) loginSection.style.display = "none";
-    if (appContent) appContent.style.display = "block";
-
-    // Wyświetl status zalogowania
-    if (userStatus) {
-        userStatus.textContent = `Zalogowano: ${user.provider} (${user.email})`;
-    }
-
-    // ZABEZPIECZENIE DEV TOOLS:
-    // Przycisk Dev pokaże się TYLKO dla Twojego maila
-    if (devBtn) {
-        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-            devBtn.style.display = "inline-block";
-        } else {
-            devBtn.style.display = "none";
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BasokudaPlayer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-    }
-}
 
-// --- 3. WYLOGOWANIE ---
-function logout() {
-    localStorage.removeItem("loggedUser");
-    window.location.reload();
-}
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            min-height: 100vh;
+        }
 
-// --- 4. START SKRYPTU ---
-document.addEventListener("DOMContentLoaded", () => {
-    // A. Sprawdź, czy właśnie wróciliśmy z autoryzacji Discorda
-    if (window.location.hash.includes("access_token")) {
-        handleDiscordCallback();
-        return;
-    }
+        /* --- NAV BAR --- */
+        navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 40px;
+            background-color: rgba(11, 12, 16, 0.95);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid #1f2833;
+        }
 
-    // B. Sprawdź, czy użytkownik jest już zapisany w pamięci (Local Storage)
-    const savedUser = localStorage.getItem("loggedUser");
-    if (savedUser) {
-        initApp(JSON.parse(savedUser));
-    } else {
-        initApp(null);
-    }
-});
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #c5c6c7;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #66fcf1;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-bar {
+            background-color: #1f2833;
+            border: 1px solid #45a29e;
+            border-radius: 20px;
+            padding: 6px 15px;
+            color: #fff;
+            outline: none;
+        }
+
+        .btn-login, .btn-dev {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .btn-login {
+            background-color: #45a29e;
+            color: #0b0c10;
+        }
+
+        .btn-dev {
+            background-color: #ff0055;
+            color: #fff;
+            display: none; /* Domyślnie ukryty */
+        }
+
+        /* --- HERO BANNER --- */
+        .hero {
+            position: relative;
+            height: 70vh;
+            margin-top: 60px;
+            background: linear-gradient(to top, #0b0c10, transparent), #1f2833;
+            display: flex;
+            align-items: flex-end;
+            padding: 60px 40px;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero-tag {
+            background-color: #ffb703;
+            color: #000;
+            padding: 3px 8px;
+            font-weight: bold;
+            font-size: 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            margin-bottom: 15px;
+            line-height: 1.1;
+        }
+
+        .hero-desc {
+            color: #c5c6c7;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-main {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* --- GRID SECTION --- */
+        .section-container {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #1f2833;
+            border-radius: 8px;
+            height: 240px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #0b0c10;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <navbar>
+        <a href="#" class="logo">BasokudaPlayer</a>
+        <ul class="nav-links">
+            <li><a href="#">Strona główna</a></li>
+            <li><a href="#">Kategorie</a></li>
+            <li><a href="#">Discord</a></li>
+        </ul>
+        <div class="nav-right">
+            <input type="text" class="search-bar" placeholder="Szukaj...">
+            <button id="dev-tools-btn" class="btn-dev">Narzędzia Dev 🛠️</button>
+            <a href="https://discord.com/oauth2/authorize?client_id=TWOJE_CLIENT_ID&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" id="login-btn" class="btn-login">Zaloguj się</a>
+        </div>
+    </navbar>
+
+    <!-- MAIN HERO -->
+    <div class="hero">
+        <div class="hero-content">
+            <span class="hero-tag">#1 POLECANE</span>
+            <h1 class="hero-title">Tytuł Sekcji Głównej</h1>
+            <p class="hero-desc">Tutaj umieścisz opis swojego głównego materiału lub najważniejszej funkcji odtwarzacza.</p>
+            <div class="hero-btns">
+                <button class="btn-main">Oglądaj</button>
+                <button class="btn-secondary">Więcej informacji</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARDS GRID -->
+    <div class="section-container">
+        <h2 class="section-title">Ostatnio dodane</h2>
+        <div class="card-grid">
+            <div class="card"><span class="card-badge">#1</span> Karta 1</div>
+            <div class="card"><span class="card-badge">#2</span> Karta 2</div>
+            <div class="card"><span class="card-badge">#3</span> Karta 3</div>
+            <div class="card"><span class="card-badge">#4</span> Karta 4</div>
+            <div class="card"><span class="card-badge">#5</span> Karta 5</div>
+            <div class="card"><span class="card-badge">#6</span> Karta 6</div>
+        </div>
+    </div>
+
+    <!-- LOGIKA JS -->
+    <script>
+        const ADMIN_EMAIL = "dogdeyy@gmail.com";
+
+        function handleDiscordAuth() {
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get("access_token");
+
+            if (token) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+                
+                fetch("https://discord.com/api/users/@me", {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(res => res.json())
+                .then(user => {
+                    if (user.id) {
+                        const loggedUser = {
+                            name: user.global_name || user.username,
+                            email: user.email || `${user.username}@discord.user`
+                        };
+                        localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
+                        updateUI(loggedUser);
+                    }
+                });
+            }
+        }
+
+        function updateUI(user) {
+            const loginBtn = document.getElementById("login-btn");
+            const devBtn = document.getElementById("dev-tools-btn");
+
+            if (user) {
+                loginBtn.textContent = user.name;
+                loginBtn.href = "#";
+
+                // Pokazuje Przycisk Dev TYLKO dla Ciebie
+                if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    devBtn.style.display = "inline-block";
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.location.hash.includes("access_token")) {
+                handleDiscordAuth();
+            } else {
+                const savedUser = localStorage.getItem("loggedUser");
+                if (savedUser) updateUI(JSON.parse(savedUser));
+            }
+        });
+    </script>
+</body>
+</html>
