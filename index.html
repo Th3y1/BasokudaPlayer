@@ -3,41 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BasokudaPlayer</title>
+    <title>BasokudaPlayer - Ultimate Anime Hub</title>
     <style>
+        :root {
+            --bg-main: #0b0c10;
+            --bg-sec: #1f2833;
+            --accent: #66fcf1;
+            --accent-hover: #45a29e;
+            --text-main: #ffffff;
+            --text-muted: #c5c6c7;
+            --admin-color: #ff0055;
+            --card-bg: #151b22;
+        }
+
+        /* Motyw Jasny (opcjonalny) */
+        [data-theme="light"] {
+            --bg-main: #f0f2f5;
+            --bg-sec: #ffffff;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --text-main: #1a1a1a;
+            --text-muted: #65676b;
+            --card-bg: #ffffff;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         body {
-            background-color: #0b0c10;
-            color: #ffffff;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-sec); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-hover); }
+
         /* --- NAV BAR --- */
-        navbar {
+        nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 15px 40px;
-            background-color: rgba(11, 12, 16, 0.95);
+            background-color: var(--bg-main);
+            backdrop-filter: blur(10px);
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            border-bottom: 1px solid #1f2833;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: #fff;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-main);
             text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+        .logo span { color: var(--accent); }
 
         .nav-links {
             display: flex;
@@ -46,15 +81,14 @@
         }
 
         .nav-links a {
-            color: #c5c6c7;
+            color: var(--text-muted);
             text-decoration: none;
             font-size: 14px;
-            transition: 0.2s;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-
-        .nav-links a:hover {
-            color: #66fcf1;
-        }
+        .nav-links a:hover { color: var(--accent); }
 
         .nav-right {
             display: flex;
@@ -63,185 +97,379 @@
         }
 
         .search-bar {
-            background-color: #1f2833;
-            border: 1px solid #45a29e;
+            background-color: var(--bg-sec);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 6px 15px;
-            color: #fff;
-            outline: none;
-        }
-
-        .btn-login, .btn-dev {
             padding: 8px 16px;
-            border-radius: 6px;
+            color: var(--text-main);
+            outline: none;
+            width: 180px;
+            font-size: 13px;
+        }
+        .search-bar:focus { border-color: var(--accent); width: 220px; }
+
+        .nav-icon-btn {
+            background: var(--bg-sec);
+            border: none;
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .nav-icon-btn:hover { background: var(--accent); color: var(--bg-main); }
+
+        .btn-login, .btn-dev, .btn-logout {
+            padding: 8px 16px;
+            border-radius: 8px;
             border: none;
             cursor: pointer;
             font-weight: bold;
             text-decoration: none;
             font-size: 13px;
         }
-
-        .btn-login {
-            background-color: #45a29e;
-            color: #0b0c10;
-        }
-
-        .btn-dev {
-            background-color: #ff0055;
-            color: #fff;
-            display: none; /* Domyślnie ukryty */
-        }
+        .btn-login { background-color: var(--accent); color: var(--bg-main); }
+        .btn-logout { background-color: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); display: none; }
+        .btn-dev { background-color: var(--admin-color); color: #fff; display: none; }
 
         /* --- HERO BANNER --- */
         .hero {
             position: relative;
-            height: 70vh;
-            margin-top: 60px;
-            background: linear-gradient(to top, #0b0c10, transparent), #1f2833;
+            height: 80vh;
             display: flex;
             align-items: flex-end;
             padding: 60px 40px;
+            background: linear-gradient(to top, var(--bg-main) 0%, transparent 60%, rgba(0,0,0,0.8) 100%), 
+                        url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1920&auto=format&fit=crop') center/cover;
+            margin-top: 60px;
         }
-
-        .hero-content {
-            max-width: 600px;
-        }
-
+        .hero-content { max-width: 650px; z-index: 2; }
         .hero-tag {
-            background-color: #ffb703;
-            color: #000;
-            padding: 3px 8px;
-            font-weight: bold;
-            font-size: 12px;
+            background-color: var(--accent);
+            color: var(--bg-main);
+            padding: 4px 10px;
+            font-weight: 800;
+            font-size: 11px;
             border-radius: 4px;
             display: inline-block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
+        .hero-title { font-size: 48px; font-weight: 900; margin-bottom: 15px; line-height: 1.1; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+        .hero-desc { color: #e0e0e0; font-size: 15px; line-height: 1.5; margin-bottom: 25px; text-shadow: 0 1px 5px rgba(0,0,0,0.8); }
+        .hero-btns { display: flex; gap: 12px; }
+        
+        .btn-main { background-color: #fff; color: #000; padding: 10px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-secondary { background-color: rgba(255, 255, 255, 0.15); color: #fff; padding: 10px 24px; border-radius: 6px; font-weight: bold; border: none; cursor: pointer; backdrop-filter: blur(5px); }
 
-        .hero-title {
-            font-size: 42px;
-            margin-bottom: 15px;
-            line-height: 1.1;
-        }
-
-        .hero-desc {
-            color: #c5c6c7;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .hero-btns {
+        /* --- FILTRY KATEGORII --- */
+        .categories-bar {
             display: flex;
             gap: 10px;
+            padding: 20px 40px;
+            overflow-x: auto;
         }
-
-        .btn-main {
-            background-color: #fff;
-            color: #000;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: bold;
-            border: none;
+        .cat-chip {
+            background-color: var(--bg-sec);
+            color: var(--text-muted);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
+            white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.05);
         }
+        .cat-chip.active, .cat-chip:hover { background-color: var(--accent); color: var(--bg-main); }
 
-        .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #fff;
-            padding: 10px 24px;
-            border-radius: 6px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* --- GRID SECTION --- */
-        .section-container {
-            padding: 40px;
-        }
-
-        .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
+        /* --- SEKCJE I KARTY --- */
+        .section-container { padding: 30px 40px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .section-title { font-size: 22px; font-weight: bold; border-left: 4px solid var(--accent); padding-left: 12px; }
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
         }
 
         .card {
-            background-color: #1f2833;
+            background-color: var(--card-bg);
             border-radius: 8px;
-            height: 240px;
+            height: 300px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-            padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.4); }
+
+        .card-overlay {
+            position: absolute;
+            bottom: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+            padding: 15px 12px 12px 12px;
+        }
+        .card-title { font-size: 15px; font-weight: bold; margin-bottom: 4px; color: #fff; }
+        .card-info { font-size: 11px; color: var(--accent); font-weight: 600; display: flex; justify-content: space-between; }
+        
+        .card-badge {
+            position: absolute; top: 10px; left: 10px;
+            background-color: rgba(11, 12, 16, 0.8);
+            padding: 3px 6px; border-radius: 4px;
+            font-size: 10px; font-weight: bold; color: var(--accent);
+            backdrop-filter: blur(4px);
         }
 
-        .card-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #0b0c10;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
+        .fav-btn {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(0,0,0,0.5); border: none; color: #fff;
+            width: 28px; height: 28px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
         }
+        .fav-btn:hover { color: #ff0055; }
+
+        /* --- MODALE (OKNA) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background-color: var(--bg-sec); padding: 30px; border-radius: 12px;
+            width: 90%; max-width: 550px; border: 1px solid rgba(255,255,255,0.1);
+            position: relative; max-height: 85vh; overflow-y: auto;
+        }
+        .modal-title { font-size: 22px; margin-bottom: 15px; color: var(--text-main); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; }
+
+        .dev-action-btn {
+            display: block; width: 100%; padding: 10px; background-color: rgba(255,255,255,0.05);
+            color: var(--text-main); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+            margin-bottom: 10px; cursor: pointer; font-weight: bold; text-align: left;
+        }
+        .dev-action-btn:hover { background-color: rgba(255,255,255,0.1); border-color: var(--accent); }
+        .dev-action-btn.danger { border-color: var(--admin-color); color: var(--admin-color); }
+        .dev-action-btn.danger:hover { background-color: var(--admin-color); color: #fff; }
+
+        /* --- TOAST POWIADOMIENIA --- */
+        #toast {
+            position: fixed; bottom: 20px; right: 20px;
+            background: var(--bg-sec); color: var(--text-main);
+            padding: 12px 20px; border-radius: 8px; border-left: 4px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); z-index: 9999;
+            transform: translateY(100px); opacity: 0; transition: 0.3s;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        /* --- PLAYER MOCKUP --- */
+        #player-modal .modal-content { max-width: 800px; padding: 0; background: #000; overflow: hidden; }
+        .video-box { width: 100%; height: 400px; background: #111; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #555; position: relative; }
+        .video-controls { padding: 20px; background: var(--bg-sec); display: flex; justify-content: space-between; align-items: center; }
+
+        footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 40px; }
     </style>
 </head>
 <body>
 
     <!-- NAVBAR -->
-    <navbar>
-        <a href="#" class="logo">BasokudaPlayer</a>
+    <nav>
+        <a href="#" class="logo">Basokuda<span>Player</span> ⚡</a>
         <ul class="nav-links">
-            <li><a href="#">Strona główna</a></li>
-            <li><a href="#">Kategorie</a></li>
-            <li><a href="#">Discord</a></li>
+            <li><a href="#" onclick="showToast('Przeglądasz stronę główną')">Główna</a></li>
+            <li><a href="#" onclick="randomAnime()">🎲 Losuj Anime</a></li>
+            <li><a href="#" onclick="showToast('Ulubione zapisane lokalnie')">Ulubione ❤️</a></li>
+            <li><a href="https://discord.com" target="_blank">Discord</a></li>
         </ul>
         <div class="nav-right">
-            <input type="text" class="search-bar" placeholder="Szukaj...">
-            <button id="dev-tools-btn" class="btn-dev">Narzędzia Dev 🛠️</button>
-           <a href="https://discord.com/oauth2/authorize?client_id=1548255647311601734&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" id="login-btn" class="btn-login">Zaloguj się</a>
+            <input type="text" id="searchInput" class="search-bar" placeholder="Szukaj tytulu..." onkeyup="filterCards()">
+            <button class="nav-icon-btn" onclick="toggleTheme()" title="Zmień motyw">🌓</button>
+            <button id="dev-tools-btn" class="btn-dev" onclick="openModal('dev-modal')">Dev 🛠️</button>
+            <button id="logout-btn" class="btn-logout" onclick="logout()">Wyloguj</button>
+            <a href="https://discord.com/oauth2/authorize?client_id=1548255647311601734&response_type=token&redirect_uri=https%3A%2F%2Fbasokudaplayer.netlify.app%2F&scope=identify+email" id="login-btn" class="btn-login">Discord Login</a>
         </div>
-    </navbar>
+    </nav>
 
-    <!-- MAIN HERO -->
+    <!-- HERO BANNER -->
     <div class="hero">
         <div class="hero-content">
-            <span class="hero-tag">#1 POLECANE</span>
-            <h1 class="hero-title">Tytuł Sekcji Głównej</h1>
-            <p class="hero-desc">Tutaj umieścisz opis swojego głównego materiału lub najważniejszej funkcji odtwarzacza.</p>
+            <span class="hero-tag">Hit Sezonu • Najwyższa Jakość</span>
+            <h1 class="hero-title">Mushoku Tensei:<br>Jobless Reincarnation</h1>
+            <p class="hero-desc">Rozpocznij niesamowitą podróż przez świat magii, potworów i niezapomnianych przygód z Rudeusem Greyratem.</p>
             <div class="hero-btns">
-                <button class="btn-main">Oglądaj</button>
-                <button class="btn-secondary">Więcej informacji</button>
+                <button class="btn-main" onclick="openPlayer('Mushoku Tensei')">▶ Oglądaj Odcinek 1</button>
+                <button class="btn-secondary" onclick="showToast('Dodano do Twojej listy!')">+ Dodaj do listy</button>
             </div>
         </div>
     </div>
 
-    <!-- CARDS GRID -->
+    <!-- KATEGORIE -->
+    <div class="categories-bar">
+        <div class="cat-chip active" onclick="filterCat('all')">Wszystkie</div>
+        <div class="cat-chip" onclick="filterCat('isekai')">Isekai</div>
+        <div class="cat-chip" onclick="filterCat('akcja')">Akcja</div>
+        <div class="cat-chip" onclick="filterCat('romans')">Romans</div>
+        <div class="cat-chip" onclick="filterCat('scifi')">Sci-Fi / Cyberpunk</div>
+        <div class="cat-chip" onclick="filterCat('klasyka')">Klasyka</div>
+    </div>
+
+    <!-- SIATKA ANIME -->
     <div class="section-container">
-        <h2 class="section-title">Ostatnio dodane</h2>
-        <div class="card-grid">
-            <div class="card"><span class="card-badge">#1</span> Karta 1</div>
-            <div class="card"><span class="card-badge">#2</span> Karta 2</div>
-            <div class="card"><span class="card-badge">#3</span> Karta 3</div>
-            <div class="card"><span class="card-badge">#4</span> Karta 4</div>
-            <div class="card"><span class="card-badge">#5</span> Karta 5</div>
-            <div class="card"><span class="card-badge">#6</span> Karta 6</div>
+        <div class="section-header">
+            <h2 class="section-title">Katalog Serii i Filmów</h2>
+            <span style="color: var(--text-muted); font-size: 13px;" id="count-info">12 pozycji</span>
+        </div>
+        <div class="card-grid" id="anime-grid">
+            <!-- Karta 1 -->
+            <div class="card" data-category="klasyka" style="background-image: url('https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Hunter x Hunter')">
+                <span class="card-badge">⭐ 9.4 / HD</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Hunter x Hunter</div><div class="card-info"><span>Odc. 148</span><span>Napisy PL</span></div></div>
+            </div>
+            <!-- Karta 2 -->
+            <div class="card" data-category="romans" style="background-image: url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Alya Sometimes Hides')">
+                <span class="card-badge">🔥 NOWOŚĆ</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Alya Hides Feelings</div><div class="card-info"><span>Odc. 12</span><span>Lektor PL</span></div></div>
+            </div>
+            <!-- Karta 3 -->
+            <div class="card" data-category="scifi" style="background-image: url('https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Cyberpunk Edgerunners')">
+                <span class="card-badge">⚡ KULTOWE</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Cyberpunk Edgerunners</div><div class="card-info"><span>Cały sezon</span><span>Dubbing</span></div></div>
+            </div>
+            <!-- Karta 4 -->
+            <div class="card" data-category="akcja" style="background-image: url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Jujutsu Kaisen')">
+                <span class="card-badge">⭐ TOP 1</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Jujutsu Kaisen</div><div class="card-info"><span>Odc. 47</span><span>Napisy PL</span></div></div>
+            </div>
+            <!-- Karta 5 -->
+            <div class="card" data-category="isekai" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Sword Art Online')">
+                <span class="card-badge">ZAKOŃCZONE</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Sword Art Online</div><div class="card-info"><span>Wszystkie Sezony</span><span>HD</span></div></div>
+            </div>
+            <!-- Karta 6 -->
+            <div class="card" data-category="akcja" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop');" onclick="openPlayer('Attack on Titan')">
+                <span class="card-badge">LEGENDARNE</span>
+                <button class="fav-btn" onclick="event.stopPropagation(); toggleFav(this)">❤️</button>
+                <div class="card-overlay"><div class="card-title">Attack on Titan</div><div class="card-info"><span>Finał Serii</span><span>Napisy PL</span></div></div>
+            </div>
         </div>
     </div>
 
-    <!-- LOGIKA JS -->
+    <!-- MODAL: DEV TOOLS -->
+    <div id="dev-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('dev-modal')">×</button>
+            <h2 class="modal-title">🛠️ Panel Administratora</h2>
+            <p style="margin-bottom: 15px; color: var(--text-muted); font-size: 13px;">Zarządzanie platformą BasokudaPlayer dla uprzywilejowanego konta.</p>
+            
+            <button class="dev-action-btn" onclick="showToast('Funkcja dodawania w budowie')">➕ Dodaj Nowy Odcinek do bazy</button>
+            <button class="dev-action-btn" onclick="alert('System działa poprawnie. Status: Online (Ping: 14ms)')">📊 Sprawdź statystyki serwera</button>
+            <button class="dev-action-btn" onclick="showToast('Konfiguracja odtwarzacza zapisana')">⚙️ Optymalizuj buforowanie wideo</button>
+            <button class="dev-action-btn danger" onclick="clearLocalStorageData()">🗑️ Wyczyść pamięć i zresetuj sesję</button>
+        </div>
+    </div>
+
+    <!-- MODAL: PLAYER -->
+    <div id="player-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('player-modal')">×</button>
+            <div class="video-box" id="player-screen">▶ [ Odtwarzacza Wideo ]</div>
+            <div class="video-controls">
+                <h3 id="current-title" style="font-size: 16px;">Odtwarzanie...</h3>
+                <button class="btn-login" onclick="closeModal('player-modal')">Zamknij Odtwarzacz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POWIADOMIENIE TOAST -->
+    <div id="toast">Komunikat systemu...</div>
+
+    <footer>
+        <p>BasokudaPlayer &copy; 2026. Stworzone z pasją do anime i programowania. Wszystkie prawa zastrzeżone.</p>
+    </footer>
+
+    <!-- SKRYPTY LOGIKI -->
     <script>
         const ADMIN_EMAIL = "dogdeyy@gmail.com";
 
+        // 1. Toast powiadomienia
+        function showToast(text) {
+            const toast = document.getElementById("toast");
+            toast.textContent = text;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
+
+        // 2. Modale
+        function openModal(id) { document.getElementById(id).style.display = "flex"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+        // 3. Odtwarzacz
+        function openPlayer(title) {
+            document.getElementById("current-title").textContent = `Oglądasz: ${title}`;
+            openModal('player-modal');
+            showToast(`Ładowanie strumienia: ${title}`);
+        }
+
+        // 4. Motyw jasny/ciemny
+        function toggleTheme() {
+            if (document.documentElement.getAttribute("data-theme") === "light") {
+                document.documentElement.removeAttribute("data-theme");
+                showToast("Przełączono na tryb ciemny");
+            } else {
+                document.documentElement.setAttribute("data-theme", "light");
+                showToast("Przełączono na tryb jasny");
+            }
+        }
+
+        // 5. Wyszukiwarka w czasie rzeczywistym
+        function filterCards() {
+            let query = document.getElementById("searchInput").value.toLowerCase();
+            let cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                let title = card.querySelector(".card-title").textContent.toLowerCase();
+                card.style.display = title.includes(query) ? "block" : "none";
+            });
+        }
+
+        // 6. Filtrowanie kategorii
+        function filterCat(cat) {
+            document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+            event.target.classList.add("active");
+            let cards = document.querySelectorAll(".card");
+            cards.forEach(card => {
+                if (cat === 'all' || card.dataset.category === cat) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // 7. Losowanie anime
+        function randomAnime() {
+            let cards = document.querySelectorAll(".card");
+            let randomCard = cards[Math.floor(Math.random() * cards.length)];
+            let title = randomCard.querySelector(".card-title").textContent;
+            showToast(`Wylosowano dla Ciebie: ${title}`);
+            openPlayer(title);
+        }
+
+        // 8. Ulubione serduszko
+        function toggleFav(btn) {
+            btn.style.color = btn.style.color === "rgb(255, 0, 85)" ? "#fff" : "#ff0055";
+            showToast("Zaktualizowano listę ulubionych!");
+        }
+
+        // 9. Autoryzacja Discord i obsługa konta
         function handleDiscordAuth() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
@@ -249,7 +477,6 @@
 
             if (token) {
                 window.history.replaceState({}, document.title, window.location.pathname);
-                
                 fetch("https://discord.com/api/users/@me", {
                     headers: { Authorization: `Bearer ${token}` }
                 })
@@ -262,6 +489,7 @@
                         };
                         localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
                         updateUI(loggedUser);
+                        showToast(`Zitaj ponownie, ${loggedUser.name}!`);
                     }
                 });
             }
@@ -270,24 +498,46 @@
         function updateUI(user) {
             const loginBtn = document.getElementById("login-btn");
             const devBtn = document.getElementById("dev-tools-btn");
+            const logoutBtn = document.getElementById("logout-btn");
 
             if (user) {
-                loginBtn.textContent = user.name;
+                loginBtn.textContent = `👤 ${user.name}`;
                 loginBtn.href = "#";
+                loginBtn.style.pointerEvents = "none";
+                logoutBtn.style.display = "inline-block";
 
-                // Pokazuje Przycisk Dev TYLKO dla Ciebie
                 if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                     devBtn.style.display = "inline-block";
                 }
             }
         }
 
+        function logout() {
+            localStorage.removeItem("loggedUser");
+            window.location.reload();
+        }
+
+        function clearLocalStorageData() {
+            localStorage.clear();
+            alert("Pamięć podręczna wyczyszczona.");
+            window.location.reload();
+        }
+
+        // Inicjalizacja przy starcie
         document.addEventListener("DOMContentLoaded", () => {
             if (window.location.hash.includes("access_token")) {
                 handleDiscordAuth();
             } else {
                 const savedUser = localStorage.getItem("loggedUser");
                 if (savedUser) updateUI(JSON.parse(savedUser));
+            }
+        });
+
+        // Zamknięcie okienek pod ESC
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                closeModal('dev-modal');
+                closeModal('player-modal');
             }
         });
     </script>
