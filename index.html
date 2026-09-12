@@ -1,342 +1,98 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BasokudaPlayer - Logowanie</title>
-    <style>
-        :root {
-            --bg-main: #0b0d14;
-            --bg-card: #161926;
-            --accent-pink: #f472b6;
-            --accent-blue: #38bdf8;
-            --discord-blue: #5865F2;
-            --google-bg: #ffffff;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-        }
+// --- KONFIGURACJA ---
+const ADMIN_EMAIL = "dogdeyy@gmail.com";
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+// --- ELEMENTY DOM ---
+const loginSection = document.getElementById("login-section"); // Twój kontener z przyciskami logowania
+const appContent = document.getElementById("app-content");     // Twój kontener z główną treścią strony
+const userStatus = document.getElementById("user-status");     // Napis np. "Zalogowano: Discord (nick)"
+const devBtn = document.getElementById("dev-tools-btn");         // Przycisk "Narzędzia Dev"
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+// --- 1. OBSŁUGA POWROTU Z DISCORDA (OAuth2) ---
+function handleDiscordCallback() {
+    // Discord po zalogowaniu przysyła token w adresie URL po znaku '#'
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get("access_token");
 
-        /* Tło z grafiką anime */
-        .login-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(11, 13, 20, 0.85), rgba(11, 13, 20, 0.85)),
-                        url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1600') center/cover;
-            filter: brightness(0.6) blur(2px);
-            z-index: 1;
-        }
+    if (accessToken) {
+        // Czyścimy hash z adresu URL, żeby link wyglądał czysto
+        window.history.replaceState({}, document.title, window.location.pathname);
 
-        /* Ekran Logowania */
-        #login-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .login-card {
-            background: rgba(22, 25, 38, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            padding: 40px 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            max-width: 420px;
-            width: 90%;
-            z-index: 10;
-        }
-
-        .login-card h1 {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-            font-weight: 800;
-        }
-
-        .login-card h1 span { color: var(--accent-blue); }
-
-        .login-card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 25px;
-        }
-
-        .btn-auth {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 12px;
-            border: none;
-            transition: transform 0.2s, background 0.2s;
-            text-decoration: none;
-        }
-
-        .btn-auth:hover { transform: translateY(-2px); }
-
-        .btn-discord {
-            background: var(--discord-blue);
-            color: #fff;
-        }
-        .btn-discord:hover { background: #4752c4; }
-
-        .btn-google {
-            background: var(--google-bg);
-            color: #000;
-        }
-        .btn-google:hover { background: #f1f5f9; }
-
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 15px 0 20px 0;
-        }
-
-        .checkbox-container input {
-            accent-color: var(--accent-blue);
-            cursor: pointer;
-        }
-
-        .terms-text {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .terms-text a {
-            color: var(--text-main);
-            text-decoration: underline;
-        }
-
-        /* Pop-up wyboru konta Google */
-        #google-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-        }
-
-        .google-box {
-            background: #fff;
-            color: #202124;
-            padding: 30px;
-            border-radius: 12px;
-            width: 360px;
-            text-align: left;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        .account-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f3f4;
-        }
-
-        .account-item:hover { background: #f8f9fa; }
-
-        .avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: var(--accent-pink);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        /* Główna Treść Strony (Po Zalogowaniu) */
-        #app-content {
-            display: none;
-            padding: 20px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #2d3748;
-            margin-bottom: 20px;
-        }
-
-        .dev-btn {
-            background: var(--accent-pink);
-            color: #000;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .admin-panel {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #2d3748;
-            margin-bottom: 20px;
-        }
-
-        .admin-panel input {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 6px;
-            border: 1px solid #2d3748;
-            background: var(--bg-main);
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="login-bg" id="bg-wall"></div>
-
-    <!-- Ekran Logowania -->
-    <div id="login-overlay">
-        <div class="login-card">
-            <h1>Basokuda<span>Anime</span></h1>
-            <p>Zaloguj się, aby kontynuować</p>
-
-            <!-- Przycisk z wygenerowanym linkiem z Discord Developer Portal -->
-            <button class="btn-auth btn-discord" onclick="window.location.href='TUTAJ_WKLEJ_SKOPIOWANY_LINK_Z_DISCORDA'">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066.051.051 0 0 1 .015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612Z"/>
-                </svg>
-                Kontynuuj z Discord
-            </button>
-
-            <button class="btn-auth btn-google" onclick="openGoogleModal()">
-                <img src="https://www.google.com/favicon.ico" width="18" alt="G">
-                Kontynuuj z Google
-            </button>
-
-            <div class="checkbox-container">
-                <input type="checkbox" id="discord-join" checked>
-                <label for="discord-join">Dołącz na Discord BasokudaAnime</label>
-            </div>
-
-            <div class="terms-text">
-                Logując się akceptujesz <a href="#">regulamin</a> oraz <a href="#">politykę prywatności</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Okno wyboru konta Google -->
-    <div id="google-modal">
-        <div class="google-box">
-            <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Zaloguj się przez Google</h3>
-            <p style="font-size: 0.85rem; color: #5f6368; margin-bottom: 15px;">Wybierz konto, aby przejść do BasokudaAnime</p>
-
-            <div class="account-item" onclick="selectGoogleAccount('dogdeyy@gmail.com')">
-                <div class="avatar">D</div>
-                <div>
-                    <strong style="font-size: 0.9rem;">dogdeyy</strong>
-                    <div style="font-size: 0.8rem; color: #5f6368;">dogdeyy@gmail.com</div>
-                </div>
-            </div>
-
-            <div class="account-item" onclick="selectGoogleAccount('user@gmail.com')">
-                <div class="avatar" style="background: var(--accent-blue);">U</div>
-                <div>
-                    <strong style="font-size: 0.9rem;">Użytkownik</strong>
-                    <div style="font-size: 0.8rem; color: #5f6368;">uzytkownik@gmail.com</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Główna zawartość serwisu -->
-    <div id="app-content">
-        <header>
-            <h1 style="color: var(--accent-pink);">BasokudaPlayer</h1>
-            <div>
-                <span id="user-display" style="margin-right: 15px; font-weight: bold;"></span>
-                <button class="dev-btn" onclick="toggleAdminPanel()">Narzędzia Dev 🛠️</button>
-            </div>
-        </header>
-
-        <!-- Panel Dev dla dogdeyy@gmail.com -->
-        <div class="admin-panel" id="admin-panel" style="display: none;">
-            <h3 style="color: var(--accent-blue); margin-bottom: 10px;">🛠️ Panel Deweloperski (Dostęp: dogdeyy@gmail.com)</h3>
-            <input type="text" placeholder="Tytuł Anime">
-            <input type="text" placeholder="Link Embed">
-            <button style="padding: 8px 15px; margin-top: 5px; background: var(--accent-blue); border: none; border-radius: 6px; cursor: pointer;">Dodaj Anime</button>
-        </div>
-
-        <h2>Witaj na stronie z odtwarzaczem!</h2>
-        <p style="margin-top: 10px; color: var(--text-muted);">Jesteś pomyślnie zalogowany.</p>
-    </div>
-
-    <script>
-        let currentEmail = "";
-
-        // Odczytywanie powrotu z Discorda (jeśli w adresie URL pojawił się access_token lub code)
-        window.onload = function() {
-            if (window.location.hash.includes('access_token') || window.location.search.includes('code')) {
-                completeLogin("Discord");
+        // Pobieramy dane użytkownika z API Discorda
+        fetch("https://discord.com/api/users/@me", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
-        };
-
-        function openGoogleModal() {
-            document.getElementById('google-modal').style.display = 'flex';
-        }
-
-        function selectGoogleAccount(email) {
-            currentEmail = email;
-            document.getElementById('google-modal').style.display = 'none';
-            completeLogin("Google (" + email + ")");
-        }
-
-        function completeLogin(providerText) {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('bg-wall').style.display = 'none';
-            document.getElementById('app-content').style.display = 'block';
-
-            document.getElementById('user-display').innerText = "Zalogowano: " + providerText;
-        }
-
-        function toggleAdminPanel() {
-            if (currentEmail !== "dogdeyy@gmail.com") {
-                alert("Brak uprawnień! Tylko konto dogdeyy@gmail.com ma dostęp do Narzędzi Dev.");
-                return;
+        })
+        .then(res => res.json())
+        .then(userData => {
+            if (userData.id) {
+                // Zapisujemy sesję w pamięci przeglądarki
+                const sessionUser = {
+                    name: userData.global_name || userData.username,
+                    email: userData.email || `${userData.username}@discord.user`, // Jeśli zakres (scope) nie zawierał maila
+                    provider: "Discord",
+                    avatar: userData.avatar 
+                        ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png` 
+                        : null
+                };
+                
+                localStorage.setItem("loggedUser", JSON.stringify(sessionUser));
+                initApp(sessionUser);
             }
+        })
+        .catch(err => console.error("Błąd podczas pobierania profilu Discord:", err));
+    }
+}
 
-            const panel = document.getElementById('admin-panel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+// --- 2. INICJALIZACJA WIDOKU STRONY ---
+function initApp(user) {
+    if (!user) {
+        // Nikt nie jest zalogowany -> pokaż formularz logowania
+        if (loginSection) loginSection.style.display = "block";
+        if (appContent) appContent.style.display = "none";
+        return;
+    }
+
+    // Użytkownik jest zalogowany -> pokaż treść strony
+    if (loginSection) loginSection.style.display = "none";
+    if (appContent) appContent.style.display = "block";
+
+    // Wyświetl status zalogowania
+    if (userStatus) {
+        userStatus.textContent = `Zalogowano: ${user.provider} (${user.email})`;
+    }
+
+    // ZABEZPIECZENIE DEV TOOLS:
+    // Przycisk Dev pokaże się TYLKO dla Twojego maila
+    if (devBtn) {
+        if (user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+            devBtn.style.display = "inline-block";
+        } else {
+            devBtn.style.display = "none";
         }
-    </script>
-</body>
-</html>
+    }
+}
+
+// --- 3. WYLOGOWANIE ---
+function logout() {
+    localStorage.removeItem("loggedUser");
+    window.location.reload();
+}
+
+// --- 4. START SKRYPTU ---
+document.addEventListener("DOMContentLoaded", () => {
+    // A. Sprawdź, czy właśnie wróciliśmy z autoryzacji Discorda
+    if (window.location.hash.includes("access_token")) {
+        handleDiscordCallback();
+        return;
+    }
+
+    // B. Sprawdź, czy użytkownik jest już zapisany w pamięci (Local Storage)
+    const savedUser = localStorage.getItem("loggedUser");
+    if (savedUser) {
+        initApp(JSON.parse(savedUser));
+    } else {
+        initApp(null);
+    }
+});
