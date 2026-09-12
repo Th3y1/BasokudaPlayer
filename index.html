@@ -404,7 +404,22 @@
         </div>
     </div>
 
-    <!-- ADMIN MODAL (DODawanie i USUWAtanie odcinków - bez logowania) -->
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminLoginModal" class="generic-modal">
+        <div class="generic-content" style="width: 350px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="font-size:16px; color:var(--accent);">🔐 Autoryzacja Administratora</h3>
+                <button class="close-btn" onclick="closeAdminLoginModal()">×</button>
+            </div>
+            <div class="form-group">
+                <label>Podaj hasło administratora</label>
+                <input type="password" id="adminPasswordInput" class="form-control" placeholder="Wpisz hasło..." onkeydown="if(event.key==='Enter') verifyAdminPassword()">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; justify-content:center;" onclick="verifyAdminPassword()">Zaloguj się</button>
+        </div>
+    </div>
+
+    <!-- ADMIN MODAL (ZARZĄDZANIE) -->
     <div id="adminModal" class="generic-modal">
         <div class="generic-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -688,7 +703,7 @@
             if (!ep.comments) ep.comments = [];
 
             ep.comments.push({
-                author: "Widz (Dev)",
+                author: "Widz",
                 text: val
             });
 
@@ -701,7 +716,28 @@
             document.getElementById("commentsDrawer").classList.toggle("open");
         }
 
+        /* --- LOGOWANIE ADMINISTRATORA --- */
         function openAdminModal() {
+            document.getElementById("adminLoginModal").style.display = "flex";
+            document.getElementById("adminPasswordInput").value = "";
+            document.getElementById("adminPasswordInput").focus();
+        }
+
+        function closeAdminLoginModal() {
+            document.getElementById("adminLoginModal").style.display = "none";
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById("adminPasswordInput").value;
+            if (pass === "Korneliusz1111") {
+                closeAdminLoginModal();
+                showAdminPanel();
+            } else {
+                alert("❌ Niepoprawne hasło administratora!");
+            }
+        }
+
+        function showAdminPanel() {
             const select = document.getElementById("adminAnimeSelect");
             select.innerHTML = "";
             animeDatabase.forEach(a => {
@@ -724,19 +760,14 @@
             const deleteSelect = document.getElementById("adminDeleteEpSelect");
             deleteSelect.innerHTML = "";
 
-            if (!anime || anime.episodes.length === 0) {
-                const opt = document.createElement("option");
-                opt.textContent = "Brak odcinków w tej serii";
-                deleteSelect.appendChild(opt);
-                return;
+            if (anime && anime.episodes) {
+                anime.episodes.forEach((ep, idx) => {
+                    const opt = document.createElement("option");
+                    opt.value = idx;
+                    opt.textContent = `Odc. ${ep.num}: ${ep.title}`;
+                    deleteSelect.appendChild(opt);
+                });
             }
-
-            anime.episodes.forEach((ep, idx) => {
-                const opt = document.createElement("option");
-                opt.value = idx;
-                opt.textContent = `Odc. ${ep.num}: ${ep.title}`;
-                deleteSelect.appendChild(opt);
-            });
         }
 
         function addNewEpisode() {
@@ -745,52 +776,86 @@
             const title = document.getElementById("adminEpTitle").value.trim();
             const url = document.getElementById("adminEpUrl").value.trim();
 
-            if (!title || !url || isNaN(num)) {
-                alert("Wypełnij poprawnie wszystkie pola nowego odcinka!");
+            if (!num || !title || !url) {
+                alert("Wypełnij wszystkie pola dla nowego odcinka!");
                 return;
             }
 
             const anime = animeDatabase.find(a => a.id === animeId);
-            anime.episodes.push({ num, title, url, flags: "🇵🇱 🇯🇵", comments: [] });
-            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
-            alert("✅ Dodano pomyślnie nowy odcinek do bazy danych!");
-            document.getElementById("adminEpTitle").value = "";
-            document.getElementById("adminEpUrl").value = "";
-            document.getElementById("adminEpNum").value = "";
-            updateDeleteEpisodeSelect();
-            renderGrid();
+            if (anime) {
+                anime.episodes.push({ num, title, url, flags: "🇵🇱 🇯🇵", comments: [] });
+                localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+                alert("Dodano pomyślnie odcinek!");
+                document.getElementById("adminEpNum").value = "";
+                document.getElementById("adminEpTitle").value = "";
+                document.getElementById("adminEpUrl").value = "";
+                updateDeleteEpisodeSelect();
+                renderGrid();
+            }
         }
 
         function deleteEpisode() {
             const animeId = parseInt(document.getElementById("adminAnimeSelect").value);
             const epIdx = parseInt(document.getElementById("adminDeleteEpSelect").value);
+
             const anime = animeDatabase.find(a => a.id === animeId);
-
-            if (!anime || isNaN(epIdx) || anime.episodes.length === 0) {
-                alert("Nie wybrano poprawnego odcinka do usunięcia!");
-                return;
+            if (anime && !isNaN(epIdx)) {
+                anime.episodes.splice(epIdx, 1);
+                localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
+                alert("Usunięto odcinek!");
+                updateDeleteEpisodeSelect();
+                renderGrid();
             }
-
-            const removed = anime.episodes.splice(epIdx, 1);
-            localStorage.setItem("basokuda_db_v3", JSON.stringify(animeDatabase));
-            alert(`🗑️ Usunięto odcinek: ${removed[0].title}`);
-            updateDeleteEpisodeSelect();
-            renderGrid();
         }
 
         function exportDatabaseJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(animeDatabase, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "basokuda_database_backup.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "basokuda_database.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function openWatchLaterModal() {
+            document.getElementById("watchLaterModal").style.display = "flex";
+            renderWatchLaterList();
+        }
+
+        function closeWatchLaterModal() {
+            document.getElementById("watchLaterModal").style.display = "none";
+        }
+
+        function renderWatchLaterList() {
+            const list = document.getElementById("watchLaterList");
+            list.innerHTML = "";
+            if (watchLaterList.length === 0) {
+                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center; padding: 20px;">Brak zapisanych pozycji na liście.</div>';
+                return;
+            }
+            watchLaterList.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:10px; border-radius:6px; font-size:13px;";
+                div.innerHTML = `<span>${item.title}</span> <button class="btn btn-danger" style="padding:2px 6px; font-size:11px;" onclick="removeFromWatchLater(${index})">Usuń</button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function removeFromWatchLater(index) {
+            watchLaterList.splice(index, 1);
+            localStorage.setItem("basokuda_watchlater", JSON.stringify(watchLaterList));
+            renderWatchLaterList();
+            updateWatchLaterCounter();
+        }
+
+        function updateWatchLaterCounter() {
+            document.getElementById("watchLaterCount").textContent = watchLaterList.length;
         }
 
         function toggleRandomAnime() {
             const randomIdx = Math.floor(Math.random() * animeDatabase.length);
-            openPlayerModal(randomIdx);
+            openPlayerModal(animeId = randomIdx);
         }
 
         function toggleAutoplayNext() {
@@ -799,15 +864,15 @@
         }
 
         function cyclePlayerSource() {
-            alert("🔄 Przełączono na alternatywny serwer strumieniowy PRO (Mirror 2).");
+            alert("Przełączono źródło na alternatywny serwer Pro (Backup).");
         }
 
         function toggleTheaterMode() {
-            alert("🎬 Tryb kinowy włączony.");
+            alert("Tryb kinowy włączony.");
         }
 
         function markAsWatchedCurrent() {
-            alert("✔️ Odcinek oznaczony jako obejrzany.");
+            alert("Oznaczono bieżący odcinek jako obejrzany.");
         }
 
         function playNextEpisode() {
@@ -815,32 +880,8 @@
             if (currentEpIndex + 1 < anime.episodes.length) {
                 selectEpisode(currentEpIndex + 1);
             } else {
-                alert("To był ostatni dostępny odcinek tej serii.");
+                alert("To ostatni dostępny odcinek tej serii!");
             }
-        }
-
-        function openWatchLaterModal() {
-            const list = document.getElementById("watchLaterList");
-            list.innerHTML = "";
-            if (watchLaterList.length === 0) {
-                list.innerHTML = '<div style="color:var(--text-muted); font-size:12px; text-align:center;">Twoja lista do obejrzenia jest pusta.</div>';
-            } else {
-                watchLaterList.forEach(title => {
-                    const div = document.createElement("div");
-                    div.style.cssText = "background:var(--bg-main); padding:8px; border-radius:4px; font-size:12px;";
-                    div.textContent = title;
-                    list.appendChild(div);
-                });
-            }
-            document.getElementById("watchLaterModal").style.display = "flex";
-        }
-
-        function closeWatchLaterModal() {
-            document.getElementById("watchLaterModal").style.display = "none";
-        }
-
-        function updateWatchLaterCounter() {
-            document.getElementById("watchLaterCount").textContent = watchLaterList.length;
         }
     </script>
 </body>
